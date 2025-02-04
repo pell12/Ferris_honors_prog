@@ -1,8 +1,52 @@
-<html>
-    <header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferris Honors Program</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
 
-    </header>
-    <body>
-        <h1>Honors Program</h1>
-    </body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Applications</a></li>
+                <li><a href="#">Semester Data Entry Form</a></li>
+                <li><a href="#">Honors Activity Tracking</a></li>
+                <li><a href="#">Student Status Tracking</a></li>
+                <li><a href="#">Upload/Data Sync</a></li>
+                <li><a href="#">Report Screen</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <h1>Welcome to the Honors Program</h1>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let navLinks = document.querySelectorAll(".nav-links li a");
+            
+            navLinks.forEach(link => {
+                link.addEventListener("click", function() {
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove("active"));
+                    
+                    // Add active class to clicked link
+                    this.classList.add("active");
+                });
+            });
+        });
+        </script>
+        
+
+</body>
 </html>
