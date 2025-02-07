@@ -6,9 +6,29 @@ body {
     display: flex;
 }
 
+/*Grid container for Inbox and Chart*/
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: 150px 300px;
+    gap: 100px;
+    background-color: white;
+    padding: 25px;
+    max-width: 80%;  
+  }
+  
+  .grid-container > div {
+    background-color: whitesmoke;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 25px;
+    position: relative;
+   
+  }
+
 /* Container for Sidebar and Content */
 .container {
-    display: flex;
+    display: block;
     width: 100%;
 }
 

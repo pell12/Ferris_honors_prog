@@ -6,6 +6,8 @@
     <title>Ferris Honors Program</title>
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
     
@@ -38,6 +40,101 @@
         <!-- Main Content Area -->
         <main class="content">
             <h1>Dashboard</h1>
+            <h2>OverView</h2>
+
+                <div class="grid-container">
+                <div>New applications<br><br>Inbox<i class="fa fa-inbox" aria-hidden="true"></i></div>
+                <div>Student Uploads<br><br>Inbox<i class="fa fa-inbox" aria-hidden="true"></i></div>
+                <div>Student Status<br><br>Inbox<i class="fa fa-inbox" aria-hidden="true"></i></div>  
+                <div>Students<br><br>
+                    <canvas id="myChart2" style="width:100%;max-width:600px"></canvas>
+
+                <script>
+                const xValues2 = ["Current", "New",];
+                const yValues2 = [55, 15, 0];
+                const barColors2 = ["red", "green","blue","orange","brown"];
+
+                new Chart("myChart2", {
+                type: "bar",
+                data: {
+                    labels: xValues2,
+                    datasets: [{
+                    backgroundColor: barColors2,
+                    data: yValues2
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    title: {
+                    display: true,
+                    text: "Students 2025"
+                    }
+                }
+                });
+                </script>
+                </div>
+                <div>Activity Tracker<br><br>
+                    <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+
+                    <script>
+                    const xValues = ["Completed", "In-Progress", "Incomplete"];
+                    const yValues = [55, 24, 15, 0];
+                    const barColors = ["red", "brown", "Green"];
+
+                    new Chart("myChart", {
+                    type: "pie",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                        backgroundColor: barColors,
+                        data: yValues
+                        }]
+                    },
+                    options: {
+                        title: {
+                        display: true,
+                        text: "Student Activity Tracker 2025"
+                        }
+                    }
+                    });
+                    </script>
+                </div>
+                <div>Cultural/Service Events<br><br>  
+                <canvas id="myChart3" style="width:100%;max-width:600px"></canvas>
+
+                <script>
+                const xValues3 = [100,200,300,400,500,600,700,800,900,1000];
+
+                new Chart("myChart3", {
+                type: "line",
+                data: {
+                    labels: xValues3,
+                    datasets: [{ 
+                    label: "Event 1",
+                    data: [860,940,1060,1160,1270,1510,1830,2010,2330,2478],
+                    borderColor: "red",
+                    fill: false
+                    }, 
+                    {
+                    label: "Event 2", 
+                    data: [1600,1700,1900,2100,2200,2700,3000,4000,5000,6000],
+                    borderColor: "green",
+                    fill: false
+                    }, 
+                    {
+                    label: "Event 3", 
+                    data: [300,700,1000,1200,1400,1700,2000,2200,2500,2800],
+                    borderColor: "blue",
+                    fill: false
+                    }]
+                },
+                options: {
+                    legend: {display: true}
+                }
+                });
+                </script>
+                </div>
+</div>
         </main>
     </div>
 
