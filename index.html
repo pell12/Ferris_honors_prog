@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ferris Honors Program</title>
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-
+    
     <div class="container">
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
@@ -25,11 +26,39 @@
             </ul>
         </nav>
 
+        <!-- Fixed Search Bar at the Top -->
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <!-- Sign-out Icon (Font Awesome) -->
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+        </div>
+
         <!-- Main Content Area -->
         <main class="content">
-            <h1>Welcome to the Honors Program</h1>
+            <h1>Dashboard</h1>
         </main>
     </div>
+
+    <script>
+        // Function to perform search action
+        function performSearch() {
+            var query = document.getElementById("searchInput").value;
+            if (query) {
+                alert("Searching for: " + query);
+                // You can integrate this with a search functionality later
+            } else {
+                alert("Please enter a search query.");
+            }
+        }
+
+        // Function to handle sign out (example action)
+        function signOut() {
+            alert("You have signed out.");
+            // Add actual sign-out logic here (e.g., redirecting to the login page)
+        }
+    </script>    
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
