@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - Ferris Honors Program</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="applications.html" class="active">Applications</a></li>
+                <li><a href="#">Current Students</a></li>
+                <li><a href="#">Semester Grade Report</a></li>
+                <li><a href="#">Student Events</a></li>
+                <li><a href="#">Upload/Data Sync</a></li>
+            </ul>
+        </nav>
+
+        <!-- Fixed Search Bar at the Top -->
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <h1>Applications</h1>
+
+            <!-- Application Form -->
+            <form id="applicationForm" class="application-form">
+                <label for="name">Applicant Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="program">Program Applied For:</label>
+                <input type="text" id="program" name="program" required>
+
+                <label for="date">Application Date:</label>
+                <input type="date" id="date" name="date" required>
+
+                <button type="submit">Submit Application</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // Search function
+        function performSearch() {
+            const query = document.getElementById("searchInput").value;
+            alert(query ? "Searching for: " + query : "Please enter a search query.");
+        }
+
+        // Sign-out function
+        function signOut() {
+            alert("You have signed out.");
+        }
+
+        // Handle form submission
+        document.getElementById('applicationForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const program = document.getElementById('program').value;
+            const date = document.getElementById('date').value;
+
+            const applications = JSON.parse(localStorage.getItem('applications')) || [];
+            applications.push({ name, program, date });
+            localStorage.setItem('applications', JSON.stringify(applications));
+
+            alert("Application submitted successfully!");
+            window.location.href = 'index.html';
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+</html>
