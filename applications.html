@@ -2,58 +2,71 @@
 <html lang="en">
 
 <head>
-    <title>Applications - Ferris State University</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - Ferris Honors Program</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <header class="bg-danger text-white text-center py-4">
-        <h1>Applications - Ferris State University</h1>
-    </header>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">Home</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="applications.html">Applications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="semester_form.html">Semester Data Entry</a></li>
-                    <li class="nav-item"><a class="nav-link" href="honors_tracking.html">Honors Activity Tracking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="status_tracking.html">Student Status Tracking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="upload_sync.html">Upload Data Sync</a></li>
-                    <li class="nav-item"><a class="nav-link" href="report_screens.html">Report Screens</a></li>
-                </ul>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
             </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="applications.html" class="active">Applications</a></li>
+                <li><a href="#">Current Students</a></li>
+                <li><a href="#">Semester Grade Report</a></li>
+                <li><a href="#">Student Events</a></li>
+                <li><a href="#">Upload/Data Sync</a></li>
+            </ul>
+        </nav>
+
+        <!-- Fixed Search Bar at the Top -->
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
         </div>
-    </nav>
 
-    <div class="container mt-5">
-        <h2>Submit a New Application</h2>
+        <!-- Main Content Area -->
+        <main class="content">
+            <h1>Applications</h1>
 
-        <form id="applicationForm">
-            <div class="mb-3">
-                <label for="name" class="form-label">Applicant Name</label>
-                <input type="text" id="name" name="name" class="form-control" required>
-            </div>
+            <!-- Application Form -->
+            <form id="applicationForm" class="application-form">
+                <label for="name">Applicant Name:</label>
+                <input type="text" id="name" name="name" required>
 
-            <div class="mb-3">
-                <label for="program" class="form-label">Program Applied For</label>
-                <input type="text" id="program" name="program" class="form-control" required>
-            </div>
+                <label for="program">Program Applied For:</label>
+                <input type="text" id="program" name="program" required>
 
-            <div class="mb-3">
-                <label for="date" class="form-label">Application Date</label>
-                <input type="date" id="date" name="date" class="form-control" required>
-            </div>
+                <label for="date">Application Date:</label>
+                <input type="date" id="date" name="date" required>
 
-            <button type="submit" class="btn btn-danger">Submit Application</button>
-        </form>
+                <button type="submit">Submit Application</button>
+            </form>
+        </main>
     </div>
 
     <script>
+        // Search function
+        function performSearch() {
+            const query = document.getElementById("searchInput").value;
+            alert(query ? "Searching for: " + query : "Please enter a search query.");
+        }
+
+        // Sign-out function
+        function signOut() {
+            alert("You have signed out.");
+        }
+
         // Handle form submission
         document.getElementById('applicationForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -62,21 +75,18 @@
             const program = document.getElementById('program').value;
             const date = document.getElementById('date').value;
 
-            // Get existing applications or initialize an empty array
             const applications = JSON.parse(localStorage.getItem('applications')) || [];
-
-            // Add new application
             applications.push({ name, program, date });
-
-            // Store updated applications in localStorage
             localStorage.setItem('applications', JSON.stringify(applications));
 
-            // Redirect to dashboard
+            alert("Application submitted successfully!");
             window.location.href = 'index.html';
         });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+</html>
+
 
 </html>
