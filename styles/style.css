@@ -169,3 +169,7 @@ body {
 .signout-icon:hover {
     color: darkred; /* Red color on hover for sign-out */
 }
+/*Table*/
+.table, th,td {
+    border: 1px solid black;
+}
