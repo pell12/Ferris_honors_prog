@@ -76,6 +76,21 @@
             alert("Application submitted successfully!");
             window.location.href = 'index.html';
         });
+
+        fetch('sidebarNavigationHandler.json')
+            .then(response => response.json())
+            .then(data => {
+                const sidebar = document.getElementById('sidebarLinks');
+                const currentPage = window.location.pathname.split('/').pop(); // Get the current page name
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    // Check if the item URL matches the current page
+                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
+                    li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
+                    sidebar.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error loading navigation:', error));
     </script>
 
 </body>
