@@ -17,13 +17,8 @@
             <div class="logo">
                 <img src="images/ferris-logo.png" alt="Ferris State University Logo">
             </div>
-            <ul class="nav-links">
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Applications</a></li>
-                <li><a href="#">Current Students</a></li>
-                <li><a href="#">Semester Grade Report</a></li>
-                <li><a href="#">Student Events</a></li>
-                <li><a href="#">Upload/Data Sync</a></li>
+            <ul class="nav-links" id="sidebarLinks">
+                <!-- Links will be dynamically loaded here -->
             </ul>
         </nav>
 
@@ -40,47 +35,44 @@
         <main class="content">
             <h1>Current Students</h1>
             <div>
-                
+                <!-- Content for Current Students -->
             </div>
-
         </main>
     </div>
 
     <script>
+        // Fetch sidebar navigation from JSON file
+        fetch('sidebarNavigationHandler.json')
+            .then(response => response.json())
+            .then(data => {
+                const sidebar = document.getElementById('sidebarLinks');
+                const currentPage = window.location.pathname.split('/').pop(); // Get the current page name
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    // Check if the item URL matches the current page
+                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
+                    li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
+                    sidebar.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error loading navigation:', error));
+    
         // Function to perform search action
         function performSearch() {
             var query = document.getElementById("searchInput").value;
             if (query) {
                 alert("Searching for: " + query);
-                // You can integrate this with a search functionality later
             } else {
                 alert("Please enter a search query.");
             }
         }
-
+    
         // Function to handle sign out (example action)
         function signOut() {
             alert("You have signed out.");
-            // Add actual sign-out logic here (e.g., redirecting to the login page)
         }
-    </script>    
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let navLinks = document.querySelectorAll(".nav-links li a");
-            
-            navLinks.forEach(link => {
-                link.addEventListener("click", function() {
-                    // Remove active class from all links
-                    navLinks.forEach(l => l.classList.remove("active"));
-                    
-                    // Add active class to clicked link
-                    this.classList.add("active");
-                });
-            });
-        });
-        </script>
-        
+    </script>
+    
 
 </body>
 </html>

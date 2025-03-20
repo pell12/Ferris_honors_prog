@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Dashboard",
+        "url": "index.html",
+        "active": false
+    },
+    {
+        "name": "Applications",
+        "url": "applications.html",
+        "active": false
+    },
+    {
+        "name": "Current Students",
+        "url": "currentStudents.html",
+        "active": false
+    },
+    {
+        "name": "Semester Grade Report",
+        "url": "semesterGradeReport.html",
+        "active": false
+    },
+    {
+        "name": "Student Events",
+        "url": "studentEvents.html",
+        "active": false
+    },
+    {
+        "name": "Upload/Data Sync",
+        "url": "uploadDataSync.html",
+        "active": false
+    }
+]
