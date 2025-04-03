@@ -46,7 +46,13 @@
             .then(response => response.json())
             .then(data => {
                 const sidebar = document.getElementById('sidebarLinks');
-                const currentPage = window.location.pathname.split('/').pop(); // Get the current page name
+                let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
+            
+                // Check if the currentPage doesn't exist and default to 'index.html'
+                if (!currentPage) {
+                    currentPage = 'index.html';
+                }
+
                 data.forEach(item => {
                     const li = document.createElement('li');
                     // Check if the item URL matches the current page
