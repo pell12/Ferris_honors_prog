@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Events</title>
     <link rel="stylesheet" href="styles/style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
@@ -13,39 +14,170 @@
             <div class="logo">
                 <img src="images/ferris-logo.png" alt="Ferris State University Logo">
             </div>
-            <ul class="nav-links" id="sidebarLinks">
-                <!-- Navigation links will be injected here by JavaScript -->
-            </ul>
+            <ul class="nav-links" id="sidebarLinks"></ul>
         </nav>
 
         <!-- Main Content Area -->
         <main class="content">
-            <h1>Student Events</h1> <!-- Header for Student Events -->
+            <h1>Student Events</h1>
             <p>Welcome to the Student Events page. Here you can manage student events.</p>
+
+            <!-- Student Honors Activity Tracking -->
+            <div class="activity-form">
+                <h2>Record Student Honors Activity</h2>
+                <label for="activityType">Select Activity Type:</label>
+                <select id="activityType" onchange="showStudentForm()">
+                    <option value="">-- Select an Activity --</option>
+                    <option value="honorsClass">Honors Class</option>
+                    <option value="honorsContract">Honors Contract</option>
+                    <option value="coCurricular">Co-Curricular Project</option>
+                    <option value="studyAbroad">Study Abroad</option>
+                    <option value="serviceHours">15 Service Hours + 3 Events</option>
+                </select>
+
+                <div id="studentForm" style="display: none;">
+                    <h3>Enter Student Information</h3>
+                    <label for="studentId">Student ID:</label>
+                    <input type="text" id="studentId" placeholder="Enter Student ID">
+
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" placeholder="Enter First Name">
+
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" placeholder="Enter Last Name">
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Enter Email">
+
+                    <button onclick="saveStudentActivity()">Save Student Activity</button>
+                </div>
+            </div>
+
+            <!-- Bachelor’s Certificate Tracking -->
+            <div class="certificate-tracking">
+                <h2>Bachelor’s Certificate Requirements</h2>
+                <label>
+                    <input type="checkbox" id="leadershipRole"> Leadership Role Completed
+                </label>
+                <label>
+                    <input type="checkbox" id="seniorSymposium"> Senior Symposium Attended
+                </label>
+                <label for="symposiumDate">Symposium Date:</label>
+                <input type="date" id="symposiumDate">
+
+                <button onclick="saveCertificateProgress()">Save Progress</button>
+            </div>
+
+            <!-- List of Students and Activities -->
+            <div class="student-list">
+                <h2>Recorded Students & Activities</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Activity Type</th>
+                            <th>Date Recorded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody"></tbody>
+                </table>
+            </div>
         </main>
     </div>
 
     <script>
+        // Load Sidebar Navigation
         fetch('sidebarNavigationHandler.json')
             .then(response => response.json())
             .then(data => {
                 const sidebar = document.getElementById('sidebarLinks');
-                let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
-            
-                // Check if the currentPage doesn't exist and default to 'index.html'
-                if (!currentPage) {
-                    currentPage = 'index.html';
-                }
+                let currentPage = window.location.pathname.split('/').pop();
+                if (!currentPage) currentPage = 'index.html';
 
                 data.forEach(item => {
                     const li = document.createElement('li');
-                    // Check if the item URL matches the current page
-                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
+                    const isActive = item.url.includes(currentPage) ? 'active' : '';
                     li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
                     sidebar.appendChild(li);
                 });
             })
             .catch(error => console.error('Error loading navigation:', error));
+
+        // Show student form when activity is selected
+        function showStudentForm() {
+            const activityType = document.getElementById("activityType").value;
+            document.getElementById("studentForm").style.display = activityType ? "block" : "none";
+        }
+
+        // Save Student Activity
+        function saveStudentActivity() {
+            const studentId = document.getElementById("studentId").value.trim();
+            const firstName = document.getElementById("firstName").value.trim();
+            const lastName = document.getElementById("lastName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const activityType = document.getElementById("activityType").value;
+            const date = new Date().toLocaleDateString();
+
+            if (!studentId || !firstName || !lastName || !email || !activityType) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            const table = document.getElementById("studentTableBody");
+            const row = table.insertRow();
+            row.innerHTML = `
+                <td>${studentId}</td>
+                <td>${firstName}</td>
+                <td>${lastName}</td>
+                <td>${email}</td>
+                <td>${activityType.replace(/([A-Z])/g, ' $1')}</td>
+                <td>${date}</td>
+                <td>
+                    <button onclick="editRow(this)">✏️</button>
+                    <button onclick="deleteRow(this)">❌</button>
+                </td>
+            `;
+
+            // Clear form fields
+            document.getElementById("studentId").value = "";
+            document.getElementById("firstName").value = "";
+            document.getElementById("lastName").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("activityType").value = "";
+            document.getElementById("studentForm").style.display = "none";
+        }
+
+        // Edit Row Function
+        function editRow(btn) {
+            const row = btn.parentElement.parentElement;
+            document.getElementById("studentId").value = row.cells[0].innerText;
+            document.getElementById("firstName").value = row.cells[1].innerText;
+            document.getElementById("lastName").value = row.cells[2].innerText;
+            document.getElementById("email").value = row.cells[3].innerText;
+            document.getElementById("activityType").value = row.cells[4].innerText;
+            document.getElementById("studentForm").style.display = "block";
+
+            // Remove the row so it doesn't duplicate on re-save
+            row.remove();
+        }
+
+        // Delete Row Function
+        function deleteRow(btn) {
+            btn.parentElement.parentElement.remove();
+        }
+
+        // Save Certificate Progress
+        function saveCertificateProgress() {
+            const leadershipRole = document.getElementById("leadershipRole").checked;
+            const seniorSymposium = document.getElementById("seniorSymposium").checked;
+            const symposiumDate = document.getElementById("symposiumDate").value;
+
+            alert(`Saved:\nLeadership Role: ${leadershipRole}\nSenior Symposium: ${seniorSymposium}\nSymposium Date: ${symposiumDate || 'N/A'}`);
+        }
     </script>
 </body>
 </html>
