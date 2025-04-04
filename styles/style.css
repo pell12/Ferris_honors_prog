@@ -227,11 +227,11 @@ table {
     border: 2px solid black;
 }
 
-caption {
+/*caption {
     caption-side: top;
     padding: 10px;
     size: 20px;
-}
+}*/
 
 th, td {
     border: 1px solid black;
