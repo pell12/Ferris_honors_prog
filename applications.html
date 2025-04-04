@@ -8,26 +8,40 @@
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
+<div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo">
+            <img src="images/ferris-logo.png" alt="Ferris State University Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="applications.html">Applications</a></applications></li>
+            <li><a href="currentStudents.html">Current Students</a></li>
+            <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
+            <li><a href="studentEvents.html">Student Events</a></li>
+            <li><a href="uploadDataSync">Upload/Data Sync</a></li>
+        </ul>
+    </nav>
 
-    <div class="container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
-            </div>
+    <!-- Fixed Search Bar at the Top -->
+    <div class="search-container">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+        <button class="search-button" onclick="performSearch()">Search</button>
+        <!-- Sign-out Icon (Font Awesome) -->
+        <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+        <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+    </div>
 
-            <ul class="nav-links" id="sidebarLinks">
-            <ul class="nav-links">
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="applications.html">Applications</a></applications></li>
-                <li><a href="currentStudents.html">Current Students</a></li>
-                <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-                <li><a href="studentEvents.html">Student Events</a></li>
-                <li><a href="uploadDataSync">Upload/Data Sync</a></li>
-            </ul>
-        </nav>
+    <!-- Fixed Search Bar at the Top -->
+    <div class="search-container">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+        <button class="search-button" onclick="performSearch()">Search</button>
+        <!-- Sign-out Icon (Font Awesome) -->
+        <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+        <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+    </div>
 
         <!-- Fixed Search Bar at the Top -->
         <div class="search-container">
