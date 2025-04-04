@@ -220,3 +220,21 @@ body {
 .btn:hover {
     background: darkred;
 }
+
+/*Table*/
+table {
+    border-collapse: collapse;
+    border: 2px solid black;
+}
+
+caption {
+    caption-side: top;
+    padding: 10px;
+    size: 20px;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px 6px;
+    text-align: center;
+}

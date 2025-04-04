@@ -17,7 +17,17 @@
             <div class="logo">
                 <img src="images/ferris-logo.png" alt="Ferris State University Logo">
             </div>
+<<<<<<< HEAD
             <ul class="nav-links" id="sidebarLinks">
+=======
+            <ul class="nav-links">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="applications.html">Applications</a></applications></li>
+                <li><a href="currentStudents.html">Current Students</a></li>
+                <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
+                <li><a href="studentEvents.html">Student Events</a></li>
+                <li><a href="uploadDataSync">Upload/Data Sync</a></li>
+>>>>>>> e4e9296c676efcf8564151c2c350465f86bbabe9
             </ul>
         </nav>
 
@@ -44,7 +54,13 @@
                 <label for="date">Application Date:</label>
                 <input type="date" id="date" name="date" required>
 
-                <button type="submit">Submit Application</button>
+                <label for"approval">Approve:</label>
+                <input type="checkbox" id="approval" name="approval" required>
+
+                <label for"deny">Deny:</label>
+                <input type="checkbox" id="deny" name="deny" required>
+
+                <button type="submit">Submit</button>
             </form>
         </main>
     </div>
