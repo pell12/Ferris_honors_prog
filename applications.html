@@ -46,17 +46,20 @@
                 <label for="name">Applicant Name:</label>
                 <input type="text" id="name" name="name" required>
 
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="studentId" required>
+
                 <label for="program">Program Applied For:</label>
                 <input type="text" id="program" name="program" required>
 
                 <label for="date">Application Date:</label>
                 <input type="date" id="date" name="date" required>
 
-                <label for"approval">Approve:</label>
-                <input type="checkbox" id="approval" name="approval" required>
+                <label for"status">Approve:</label>
+                <input type="checkbox" id="approval" name="approval">
 
-                <label for"deny">Deny:</label>
-                <input type="checkbox" id="deny" name="deny" required>
+                <label for"status">Deny:</label>
+                <input type="checkbox" id="deny" name="deny">
 
                 <button type="submit">Submit</button>
             </form>
@@ -82,6 +85,8 @@
             const name = document.getElementById('name').value;
             const program = document.getElementById('program').value;
             const date = document.getElementById('date').value;
+            const studentId = document.getElementById('studentId').value;
+            const status = document.getElementById('approve', 'deny').value;
 
             const applications = JSON.parse(localStorage.getItem('applications')) || [];
             applications.push({ name, program, date });
