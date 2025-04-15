@@ -1,130 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferris Honors Program</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ferris Honors Program - Current Students</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body { font-family: Arial, sans-serif; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background-color: #f2f2f2; cursor: pointer; }
+    .form-container, .filter-container {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .form-container input, .filter-container input {
+      padding: 5px;
+      margin: 5px;
+    }
+    .delete-btn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .delete-btn:hover { background-color: #c9302c; }
+  </style>
 </head>
 <body>
-    
-    <div class="container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="Dashboard.html">Dashboard</a></li>
-                <li><a href="applications.html">Applications</a></li>
-                <li><a href="currentStudents.html">Current Students</a></li>
-                <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-                <li><a href="studentEvents.html">Student Events</a></li>
-                <li><a href="uploadDataSync">Upload/Data Sync</a></li>
-            </ul>
-        </nav>
+  <main class="content">
+    <h1>Current Students</h1>
 
-        <!-- Fixed Search Bar at the Top -->
-        <div class="search-container">
-            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
-            <button class="search-button" onclick="performSearch()">Search</button>
-            <!-- Sign-out Icon (Font Awesome) -->
-            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-        </div>
-
-        <!-- Main Content Area -->
-        <main class="content">
-            <h1>Current Students</h1>
-
-        <!-- Content for Current Students -->
-            <table>
-                <colgroup>
-                    <col width="10%" span="2" style="background-color: lightblue;">
-                    <col width="10%" style="background-color: lightgrey;">
-                </colgroup>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Student ID</th> 
-                    <th>Preffered Name</th>
-                    <th>Current student</th>
-                    <th>Address</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Zip</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Major</th>
-                    <th>GPA</th>
-                    <th>Total Credits</th>
-                    <th>Semesters</th>
-                    <th>Student Events Hours</th>
-                    <th>Probation</th>
-                </tr>
-                    <th>Michelle Beckett</th>
-                    <th>123456789</th>
-                    <th>Michelle</th>
-                    <th>Yes</th>
-                    <th>1111 Front St.</th>
-                    <th>Traverse City</th>
-                    <th>Michigan</th>
-                    <th>49684</th>
-                    <th>Female</th>
-                    <th>pell12@ferris.edu</th>
-                    <th>231995-0555</th>
-                    <th>CIS</th>
-                    <th>3.9</th>
-                    <th>203</th>
-                    <th>5</th>
-                    <th>12</th>
-                    <th>No</th>
-            </table>
-        </main>
+    <!-- Filter -->
+    <div class="filter-container">
+      <input type="text" id="filterName" placeholder="Filter by Name">
+      <input type="text" id="filterMajor" placeholder="Filter by Major">
     </div>
 
-    <script>
-        // Fetch sidebar navigation from JSON file
-        fetch('sidebarNavigationHandler.json')
-            .then(response => response.json())
-            .then(data => {
-                const sidebar = document.getElementById('sidebarLinks');
-                let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
-            
-                // Check if the currentPage doesn't exist and default to 'index.html'
-                if (!currentPage) {
-                    currentPage = 'index.html';
-                }
+    <!-- Add Student Form -->
+    <div class="form-container">
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Student Name" required />
+        <input type="text" id="studentId" placeholder="Student ID" required />
+        <input type="text" id="preferredName" placeholder="Preferred Name" />
+        <input type="text" id="major" placeholder="Major" required />
+        <input type="text" id="email" placeholder="Email" />
+        <button type="submit">Add Student</button>
+      </form>
+    </div>
 
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    // Check if the item URL matches the current page
-                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
-                    li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
-                    sidebar.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error loading navigation:', error));
-    
-        // Function to perform search action
-        function performSearch() {
-            var query = document.getElementById("searchInput").value;
-            if (query) {
-                alert("Searching for: " + query);
-            } else {
-                alert("Please enter a search query.");
-            }
-        }
-    
-        // Function to handle sign out (example action)
-        function signOut() {
-            alert("You have signed out.");
-        }
-    </script>
-    
+    <!-- Student Table -->
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')">Student Name ▲▼</th>
+          <th>Student ID</th>
+          <th>Preferred Name</th>
+          <th onclick="sortTable('major')">Major ▲▼</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        <!-- Rows go here -->
+      </tbody>
+    </table>
+  </main>
 
+  <script>
+    const form = document.getElementById('studentForm');
+    const tableBody = document.getElementById('studentTableBody');
+    const filterName = document.getElementById('filterName');
+    const filterMajor = document.getElementById('filterMajor');
+
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+
+    // Save and re-render
+    function updateStorage() {
+      localStorage.setItem('students', JSON.stringify(students));
+      renderTable();
+    }
+
+    // Render table rows
+    function renderTable() {
+      const nameQuery = filterName.value.toLowerCase();
+      const majorQuery = filterMajor.value.toLowerCase();
+
+      tableBody.innerHTML = '';
+
+      students
+        .filter(s =>
+          s.name.toLowerCase().includes(nameQuery) &&
+          s.major.toLowerCase().includes(majorQuery)
+        )
+        .forEach((student, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.studentId}</td>
+            <td>${student.preferredName || ''}</td>
+            <td>${student.major}</td>
+            <td>${student.email || ''}</td>
+            <td><button class="delete-btn" onclick="deleteStudent(${index})">Delete</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+    }
+
+    // Add student
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const student = {
+        name: document.getElementById('name').value,
+        studentId: document.getElementById('studentId').value,
+        preferredName: document.getElementById('preferredName').value,
+        major: document.getElementById('major').value,
+        email: document.getElementById('email').value
+      };
+      students.push(student);
+      updateStorage();
+      form.reset();
+    });
+
+    // Delete student
+    function deleteStudent(index) {
+      students.splice(index, 1);
+      updateStorage();
+    }
+
+    // Sort function
+    function sortTable(by) {
+      students.sort((a, b) => a[by].localeCompare(b[by]));
+      updateStorage();
+    }
+
+    // Filter events
+    filterName.addEventListener('input', renderTable);
+    filterMajor.addEventListener('input', renderTable);
+
+    // Initial render
+    renderTable();
+  </script>
 </body>
 </html>

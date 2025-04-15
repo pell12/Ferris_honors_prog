@@ -1,109 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferris Honors Program</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Semester Grade Report</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    caption {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .form-container {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    .form-container input {
+      padding: 5px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .delete-btn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+      background-color: #c9302c;
+    }
+  </style>
 </head>
 <body>
-    
-    <div class="container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="Dashboard.html">Dashboard</a></li>
-                <li><a href="applications.html">Applications</a></li>
-                <li><a href="currentStudents.html">Current Students</a></li>
-                <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-                <li><a href="studentEvents.html">Student Events</a></li>
-                <li><a href="uploadDataSync">Upload/Data Sync</a></li>
-            </ul>
-        </nav>
+  <main class="content">
+    <h1>Semester Grade Report</h1>
 
-        <!-- Fixed Search Bar at the Top -->
-        <div class="search-container">
-            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
-            <button class="search-button" onclick="performSearch()">Search</button>
-            <!-- Sign-out Icon (Font Awesome) -->
-            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-        </div>
-
-        <!-- Main Content Area -->
-        <main class="content">
-            <h1>Semester Grade Report</h1>
-            <!--semester grade report-->
-            
-            <table>
-                <caption>
-                    Semester Grade Report
-                </caption>
-                    <colgroup>
-                        <col span="3" width="20%" style="background-color: lightblue;">
-                        <col width="20%" style="background-color: lightgrey;">
-                    </colgroup>
-                    <tr>
-                        <th>Last Name</th>
-                        <th>First Name</th>
-                        <th>Student ID</th> 
-                        <th>Course</th>
-                        <th>CRN</th>
-                        <th>Mid-Term Grade</th>
-                        <th>Final Grade</th>
-                    </tr>
-                        <th>Michelle</th>
-                        <th>Beckett</th>
-                        <th>123456789</th>
-                        <th>ISYS 481</th>
-                        <th>58796</th>
-                        <th>4.0</th>
-                        <th>4.0</th>
-            </table>
-        </main>
+    <!-- Add Entry Form -->
+    <div class="form-container">
+      <form id="gradeForm">
+        <input type="text" id="lastName" placeholder="Last Name" required />
+        <input type="text" id="firstName" placeholder="First Name" required />
+        <input type="text" id="studentId" placeholder="Student ID" required />
+        <input type="text" id="course" placeholder="Course" required />
+        <input type="text" id="crn" placeholder="CRN" required />
+        <input type="text" id="midTerm" placeholder="Mid-Term Grade" required />
+        <input type="text" id="finalGrade" placeholder="Final Grade" required />
+        <button type="submit">Add Entry</button>
+      </form>
     </div>
 
-    <script>
-        // Function to perform search action
-        function performSearch() {
-            var query = document.getElementById("searchInput").value;
-            if (query) {
-                alert("Searching for: " + query);
-                // You can integrate this with a search functionality later
-            } else {
-                alert("Please enter a search query.");
-            }
-        }
+    <!-- Grade Table -->
+    <table>
+      <caption>Semester Grade Report</caption>
+      <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Student ID</th>
+          <th>Course</th>
+          <th>CRN</th>
+          <th>Mid-Term Grade</th>
+          <th>Final Grade</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="gradeTableBody">
+        <!-- Dynamic rows go here -->
+      </tbody>
+    </table>
+  </main>
 
-        // Function to handle sign out (example action)
-        function signOut() {
-            alert("You have signed out.");
-            // Add actual sign-out logic here (e.g., redirecting to the login page)
-        }
-    </script>    
+  <script>
+    const form = document.getElementById('gradeForm');
+    const tableBody = document.getElementById('gradeTableBody');
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let navLinks = document.querySelectorAll(".nav-links li a");
-            
-            navLinks.forEach(link => {
-                link.addEventListener("click", function() {
-                    // Remove active class from all links
-                    navLinks.forEach(l => l.classList.remove("active"));
-                    
-                    // Add active class to clicked link
-                    this.classList.add("active");
-                });
-            });
-        });
-        </script>
-        
+    // Load existing grades on page load
+    window.addEventListener('DOMContentLoaded', loadGrades);
 
+    // Handle form submission
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const entry = {
+        lastName: document.getElementById('lastName').value,
+        firstName: document.getElementById('firstName').value,
+        studentId: document.getElementById('studentId').value,
+        course: document.getElementById('course').value,
+        crn: document.getElementById('crn').value,
+        midTerm: document.getElementById('midTerm').value,
+        finalGrade: document.getElementById('finalGrade').value
+      };
+
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      grades.push(entry);
+      localStorage.setItem('grades', JSON.stringify(grades));
+
+      form.reset();
+      loadGrades();
+    });
+
+    // Load and render grades from localStorage
+    function loadGrades() {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      tableBody.innerHTML = '';
+
+      grades.forEach((grade, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${grade.lastName}</td>
+          <td>${grade.firstName}</td>
+          <td>${grade.studentId}</td>
+          <td>${grade.course}</td>
+          <td>${grade.crn}</td>
+          <td>${grade.midTerm}</td>
+          <td>${grade.finalGrade}</td>
+          <td><button class="delete-btn" onclick="deleteGrade(${index})">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Delete grade by index
+    function deleteGrade(index) {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      grades.splice(index, 1);
+      localStorage.setItem('grades', JSON.stringify(grades));
+      loadGrades();
+    }
+  </script>
 </body>
 </html>

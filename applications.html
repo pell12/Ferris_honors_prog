@@ -1,122 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferris Honors Program</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ferris Honors Program</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    /* Optional styling */
+    #applicationList {
+      margin-top: 20px;
+    }
+
+    .application-entry {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .delete-btn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+      background-color: #c9302c;
+    }
+  </style>
 </head>
 <body>
-    
-    <div class="container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <img src="images/ferris-logo.png" alt="Ferris State University Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="Dashboard.html">Dashboard</a></li>
-                <li><a href="applications.html">Applications</a></li>
-                <li><a href="currentStudents.html">Current Students</a></li>
-                <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-                <li><a href="studentEvents.html">Student Events</a></li>
-                <li><a href="uploadDataSync">Upload/Data Sync</a></li>
-            </ul>
-        </nav>
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <div class="logo">
+        <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
+      </div>
+      <ul class="nav-links" id="sidebarLinks">
+        <li><a href="Dashboard.html">Dashboard</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="currentStudents.html">Current Students</a></li>
+        <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
+        <li><a href="studentEvents.html">Student Events</a></li>
+        <li><a href="uploadDataSync">Upload/Data Sync</a></li>
+      </ul>
+    </nav>
 
-        <!-- Fixed Search Bar at the Top -->
-        <div class="search-container">
-            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
-            <button class="search-button" onclick="performSearch()">Search</button>
-            <!-- Sign-out Icon (Font Awesome) -->
-            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-        </div>
-
-
-        <!-- Main Content Area -->
-        <main class="content">
-            <h1>Applications</h1>
-
-            <!-- Application Form -->
-            <form id="applicationForm" class="application-form">
-                <label for="name">Applicant Name:</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="studentId">Student ID</label>
-                <input type="text" id="studentId" name="studentId" required>
-
-                <label for="program">Program Applied For:</label>
-                <input type="text" id="program" name="program" required>
-
-                <label for="date">Application Date:</label>
-                <input type="date" id="date" name="date" required>
-
-                <label for"status">Approve:</label>
-                <input type="checkbox" id="approval" name="approval">
-
-                <label for"status">Deny:</label>
-                <input type="checkbox" id="deny" name="deny">
-
-                <button type="submit">Submit</button>
-            </form>
-        </main>
+    <!-- Top Search Bar -->
+    <div class="search-container">
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
+      <button class="search-button" onclick="performSearch()">Search</button>
+      <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+      <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
     </div>
 
-    <script>
-        // Search function
-        function performSearch() {
-            const query = document.getElementById("searchInput").value;
-            alert(query ? "Searching for: " + query : "Please enter a search query.");
-        }
+    <!-- Main Content -->
+    <main class="content">
+      <h1>Applications</h1>
 
-        // Sign-out function
-        function signOut() {
-            alert("You have signed out.");
-        }
+      <!-- Application Form -->
+      <form id="applicationForm" class="application-form">
+        <label for="name">Applicant Name:</label>
+        <input type="text" id="name" name="name" required />
 
-        // Handle form submission
-        document.getElementById('applicationForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+        <label for="studentId">Student ID</label>
+        <input type="text" id="studentId" name="studentId" required />
 
-            const name = document.getElementById('name').value;
-            const program = document.getElementById('program').value;
-            const date = document.getElementById('date').value;
-            const studentId = document.getElementById('studentId').value;
-            const status = document.getElementById('approve', 'deny').value;
+        <label for="program">Program Applied For:</label>
+        <input type="text" id="program" name="program" required />
 
-            const applications = JSON.parse(localStorage.getItem('applications')) || [];
-            applications.push({ name, program, date });
-            localStorage.setItem('applications', JSON.stringify(applications));
+        <label for="date">Application Date:</label>
+        <input type="date" id="date" name="date" required />
 
-            alert("Application submitted successfully!");
-            window.location.href = 'index.html';
+        <label>Status:</label><br />
+        <input type="radio" id="approve" name="status" value="Approved" required />
+        <label for="approve">Approve</label>
+
+        <input type="radio" id="deny" name="status" value="Denied" />
+        <label for="deny">Deny</label>
+
+        <br /><br />
+        <button type="submit">Submit</button>
+      </form>
+
+      <!-- Display Applications Here -->
+      <div id="applicationList"></div>
+    </main>
+  </div>
+
+  <script>
+    // Search bar functionality
+    function performSearch() {
+      const query = document.getElementById("searchInput").value;
+      alert(query ? "Searching for: " + query : "Please enter a search query.");
+    }
+
+    // Sign-out functionality
+    function signOut() {
+      alert("You have signed out.");
+    }
+
+    // Display applications from localStorage
+    function displayApplications() {
+      const applications = JSON.parse(localStorage.getItem("applications")) || [];
+      const container = document.getElementById("applicationList");
+      container.innerHTML = "";
+
+      applications.forEach((app, index) => {
+        const div = document.createElement("div");
+        div.classList.add("application-entry");
+        div.innerHTML = `
+          <p><strong>Name:</strong> ${app.name}</p>
+          <p><strong>Student ID:</strong> ${app.studentId}</p>
+          <p><strong>Program:</strong> ${app.program}</p>
+          <p><strong>Date:</strong> ${app.date}</p>
+          <p><strong>Status:</strong> ${app.status}</p>
+          <button class="delete-btn" data-index="${index}">Delete</button>
+          <hr />
+        `;
+        container.appendChild(div);
+      });
+
+      // Attach delete button events
+      const deleteButtons = document.querySelectorAll(".delete-btn");
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const index = this.getAttribute("data-index");
+          const applications = JSON.parse(localStorage.getItem("applications")) || [];
+          applications.splice(index, 1);
+          localStorage.setItem("applications", JSON.stringify(applications));
+          displayApplications();
         });
+      });
+    }
 
-        fetch('sidebarNavigationHandler.json')
-            .then(response => response.json())
-            .then(data => {
-                const sidebar = document.getElementById('sidebarLinks');
-                let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
-            
-                // Check if the currentPage doesn't exist and default to 'index.html'
-                if (!currentPage) {
-                    currentPage = 'index.html';
-                }
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    // Check if the item URL matches the current page
-                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
-                    li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
-                    sidebar.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error loading navigation:', error));
-    </script>
+    // Handle form submission
+    document.getElementById("applicationForm").addEventListener("submit", function (e) {
+      e.preventDefault();
 
+      const name = document.getElementById("name").value;
+      const studentId = document.getElementById("studentId").value;
+      const program = document.getElementById("program").value;
+      const date = document.getElementById("date").value;
+      const status = document.querySelector('input[name="status"]:checked')?.value;
+
+      if (!status) {
+        alert("Please select a status.");
+        return;
+      }
+
+      const applications = JSON.parse(localStorage.getItem("applications")) || [];
+      applications.push({ name, studentId, program, date, status });
+      localStorage.setItem("applications", JSON.stringify(applications));
+
+      alert("Application submitted successfully!");
+      displayApplications();
+      this.reset();
+    });
+
+    // Load applications on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      displayApplications();
+    });
+
+    // Sidebar loader
+    fetch("sidebarNavigationHandler.json")
+      .then((response) => response.json())
+      .then((data) => {
+        const sidebar = document.getElementById("sidebarLinks");
+        let currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+        data.forEach((item) => {
+          const li = document.createElement("li");
+          const isActive = item.url.includes(currentPage) ? "active" : "";
+          li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
+          sidebar.appendChild(li);
+        });
+      })
+      .catch((error) => console.error("Error loading navigation:", error));
+  </script>
 </body>
-
 </html>
