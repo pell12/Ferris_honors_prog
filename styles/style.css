@@ -221,6 +221,34 @@ body {
     background: darkred;
 }
 
+/*delete button*/
+.delete-btn {
+    background-color: darkred;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+/*submit button*/
+  button[type="submit"] {
+    background-color: #333; /* Dark gray */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  button[type="submit"]:hover {
+    background-color: darkred;
+  }
+
 /*Table*/
 table {
     border-collapse: collapse;
