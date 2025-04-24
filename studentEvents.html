@@ -10,7 +10,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <div class="logo">
                 <img src="images/ferris-logo.png" alt="Ferris State University Logo">
@@ -18,12 +17,10 @@
             <ul class="nav-links" id="sidebarLinks"></ul>
         </nav>
 
-        <!-- Main Content Area -->
         <main class="content">
             <h1>Student Events</h1>
             <p>Welcome to the Student Events page. Here you can manage student events.</p>
 
-            <!-- Student Honors Activity Tracking -->
             <div class="activity-form">
                 <h2>Record Student Honors Activity</h2>
                 <label for="activityType">Select Activity Type:</label>
@@ -54,7 +51,6 @@
                 </div>
             </div>
 
-            <!-- Bachelor’s Certificate Tracking -->
             <div class="certificate-tracking">
                 <h2>Bachelor’s Certificate Requirements</h2>
                 <label>
@@ -69,7 +65,6 @@
                 <button onclick="saveCertificateProgress()">Save Progress</button>
             </div>
 
-            <!-- List of Students and Activities -->
             <div class="student-list">
                 <h2>Recorded Students & Activities</h2>
                 <table>
@@ -91,7 +86,6 @@
     </div>
 
     <script>
-        // Load Sidebar Navigation
         fetch('sidebarNavigationHandler.json')
             .then(response => response.json())
             .then(data => {
@@ -108,13 +102,11 @@
             })
             .catch(error => console.error('Error loading navigation:', error));
 
-        // Show student form when activity is selected
         function showStudentForm() {
             const activityType = document.getElementById("activityType").value;
             document.getElementById("studentForm").style.display = activityType ? "block" : "none";
         }
 
-        // Save Student Activity
         function saveStudentActivity() {
             const studentId = document.getElementById("studentId").value.trim();
             const firstName = document.getElementById("firstName").value.trim();
@@ -125,6 +117,16 @@
 
             if (!studentId || !firstName || !lastName || !email || !activityType) {
                 alert("Please fill out all fields.");
+                return;
+            }
+
+            if (!/^\d{7,}$/.test(studentId)) {
+                alert("Student ID must be at least 7 digits.");
+                return;
+            }
+
+            if (!/^[\w.-]+@ferris\.edu$/.test(email)) {
+                alert("Email must be a valid @ferris.edu address.");
                 return;
             }
 
@@ -143,7 +145,6 @@
                 </td>
             `;
 
-            // Clear form fields
             document.getElementById("studentId").value = "";
             document.getElementById("firstName").value = "";
             document.getElementById("lastName").value = "";
@@ -152,7 +153,6 @@
             document.getElementById("studentForm").style.display = "none";
         }
 
-        // Edit Row Function
         function editRow(btn) {
             const row = btn.parentElement.parentElement;
             document.getElementById("studentId").value = row.cells[0].innerText;
@@ -162,16 +162,13 @@
             document.getElementById("activityType").value = row.cells[4].innerText;
             document.getElementById("studentForm").style.display = "block";
 
-            // Remove the row so it doesn't duplicate on re-save
             row.remove();
         }
 
-        // Delete Row Function
         function deleteRow(btn) {
             btn.parentElement.parentElement.remove();
         }
 
-        // Save Certificate Progress
         function saveCertificateProgress() {
             const leadershipRole = document.getElementById("leadershipRole").checked;
             const seniorSymposium = document.getElementById("seniorSymposium").checked;
