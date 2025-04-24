@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload / Data Sync - Ferris Honors Program</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Upload/Data Sync</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
 </head>
-
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
@@ -16,9 +15,7 @@
             <div class="logo">
                 <img src="images/ferris-logo.png" alt="Ferris State University Logo">
             </div>
-            <ul class="nav-links" id="sidebarLinks">
-                <!-- Navigation links will be injected here by JavaScript -->
-            </ul>
+            <ul class="nav-links" id="sidebarLinks"></ul>
         </nav>
 
         <!-- Main Content Area -->
@@ -29,21 +26,39 @@
     </div>
 
     <script>
-        fetch('sidebarNavigationHandler.json')
+        // fetch('sidebarNavigationHandler.json')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         const sidebar = document.getElementById('sidebarLinks');
+        //         let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
+            
+        //         // Check if the currentPage doesn't exist and default to 'index.html'
+        //         if (!currentPage) {
+        //             currentPage = 'index.html';
+        //         }
+
+        //         data.forEach(item => {
+        //             const li = document.createElement('li');
+        //             // Check if the item URL matches the current page
+        //             const isActive = item.url.includes(currentPage) ? 'active' : ''; 
+        //             li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
+        //             sidebar.appendChild(li);
+        //         });
+        //     })
+        //     .catch(error => console.error('Error loading navigation:', error));
+
+
+         // Load Sidebar Navigation
+         fetch('sidebarNavigationHandler.json')
             .then(response => response.json())
             .then(data => {
                 const sidebar = document.getElementById('sidebarLinks');
-                let currentPage = window.location.pathname.split('/').pop(); // Get current page name (e.g., 'index.html')
-            
-                // Check if the currentPage doesn't exist and default to 'index.html'
-                if (!currentPage) {
-                    currentPage = 'index.html';
-                }
+                let currentPage = window.location.pathname.split('/').pop();
+                if (!currentPage) currentPage = 'index.html';
 
                 data.forEach(item => {
                     const li = document.createElement('li');
-                    // Check if the item URL matches the current page
-                    const isActive = item.url.includes(currentPage) ? 'active' : ''; 
+                    const isActive = item.url.includes(currentPage) ? 'active' : '';
                     li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
                     sidebar.appendChild(li);
                 });
