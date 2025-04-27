@@ -1,32 +1,32 @@
 [
     {
         "name": "Dashboard",
-        "url": "index.html",
+        "url": "index.php",
         "active": false
     },
     {
         "name": "Applications",
-        "url": "applications.html",
+        "url": "applications.php",
         "active": false
     },
     {
         "name": "Current Students",
-        "url": "currentStudents.html",
+        "url": "currentStudents.php",
         "active": false
     },
     {
         "name": "Semester Grade Report",
-        "url": "semesterGradeReport.html",
+        "url": "semesterGradeReport.php",
         "active": false
     },
     {
         "name": "Student Events",
-        "url": "studentEvents.html",
+        "url": "studentEvents.php",
         "active": false
     },
     {
         "name": "Upload/Data Sync",
-        "url": "uploadDataSync.html",
+        "url": "uploadDataSync.php",
         "active": false
     }
 ]

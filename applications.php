@@ -15,12 +15,12 @@
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="applications.html" class="active">Applications</a></li>
-      <li><a href="currentStudents.html">Current Students</a></li>
-      <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-      <li><a href="studentEvents.html">Student Events</a></li>
-      <li><a href="uploadDataSync.html">Upload/Data Sync</a></li>
+      <li><a href="index.php">Dashboard</a></li>
+      <li><a href="applications.php" class="active">Applications</a></li>
+      <li><a href="currentStudents.php">Current Students</a></li>
+      <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
+      <li><a href="studentEvents.php">Student Events</a></li>
+      <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
   </nav>
 
@@ -147,7 +147,7 @@
       .then((response) => response.json())
       .then((data) => {
         const sidebar = document.getElementById("sidebarLinks");
-        let currentPage = window.location.pathname.split("/").pop() || "index.html";
+        let currentPage = window.location.pathname.split("/").pop() || "index.php";
 
         data.forEach((item) => {
           const li = document.createElement("li");

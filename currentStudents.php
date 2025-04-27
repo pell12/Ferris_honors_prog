@@ -15,12 +15,12 @@
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="applications.html">Applications</a></li>
-      <li><a href="currentStudents.html" class="active">Current Students</a></li>
-      <li><a href="semesterGradeReport.html">Semester Grade Report</a></li>
-      <li><a href="studentEvents.html">Student Events</a></li>
-      <li><a href="uploadDataSync.html">Upload/Data Sync</a></li>
+      <li><a href="index.php">Dashboard</a></li>
+      <li><a href="applications.php">Applications</a></li>
+      <li><a href="currentStudents.php" class="active">Current Students</a></li>
+      <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
+      <li><a href="studentEvents.php">Student Events</a></li>
+      <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
   </nav>
 

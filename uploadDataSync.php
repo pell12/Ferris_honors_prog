@@ -20,7 +20,14 @@
       <div class="logo">
         <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
       </div>
-      <ul class="nav-links" id="sidebarLinks"></ul>
+      <ul class="nav-links">
+                <li><a href="index.php">Dashboard</a></li>
+                <li><a href="applications.php">Applications</a></li>
+                <li><a href="currentStudents.php">Current Students</a></li>
+                <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
+                <li><a href="studentEvents.php">Student Events</a></li>
+                <li><a href="uploadDataSync.php" class="active">Upload/Data Sync</a></li>
+            </ul>
     </nav>
 
     <!-- Main Content Area -->
@@ -55,7 +62,7 @@
       .then(data => {
         const sidebar = document.getElementById('sidebarLinks');
         let currentPage = window.location.pathname.split('/').pop();
-        if (!currentPage) currentPage = 'index.html';
+        if (!currentPage) currentPage = 'index.php';
         data.forEach(item => {
           const li = document.createElement('li');
           const isActive = item.url.includes(currentPage) ? 'active' : '';
