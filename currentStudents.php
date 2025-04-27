@@ -9,6 +9,17 @@
 </head>
 
 <body>
+<?php
+require 'includes/database-connection.php';
+
+$query = "
+    SELECT s.student_id, s.last_name, s.first_name, s.middle_name, s.preferred_name, s.fsu_email, a.major
+    FROM student s
+    LEFT JOIN academic_records a ON s.student_id = a.student_id
+";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -59,7 +70,27 @@
         </tr>
       </thead>
       <tbody id="studentTableBody">
-        <!-- Rows go here -->
+      <?php
+    // Loop through the students array and populate the table rows
+    foreach ($students as $student) {
+        // Extract student data from the array
+        $studentName = $student['first_name'] . ' ' . $student['middle_name'] . ' ' . $student['last_name'];
+        $studentId = htmlspecialchars($student['student_id']);
+        $preferredName = htmlspecialchars($student['preferred_name']);
+        $major = htmlspecialchars($student['major']);
+        $email = htmlspecialchars($student['fsu_email']);
+        
+        echo "
+        <tr>
+          <td>$studentName</td>
+          <td>$studentId</td>
+          <td>$preferredName</td>
+          <td>$major</td>
+          <td><a href='mailto:$email'>$email</a></td>
+          <td><button onclick='viewDetails($studentId)'>View</button></td>
+        </tr>";
+    }
+    ?>
       </tbody>
     </table>
   </main>
@@ -78,7 +109,7 @@
       renderTable();
     }
 
-    function renderTable() {
+    /**function renderTable() {
       const nameQuery = filterName.value.toLowerCase();
       const majorQuery = filterMajor.value.toLowerCase();
 
@@ -101,7 +132,7 @@
           `;
           tableBody.appendChild(row);
         });
-    }
+    }**/
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();

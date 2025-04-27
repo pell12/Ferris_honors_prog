@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <?php include 'includes/database-connection.php'; ?>
 </head>
 <body>
-    <?php include 'includes/database-connection.php'; ?>
     <div class="container">
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
