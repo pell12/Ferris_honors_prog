@@ -126,7 +126,7 @@
           } else if (app.status === "Denied") {
             document.getElementById("deny").checked = true;
           } else if (app.status === "Waitlisted"){
-            document.getElementByID("wait").checked = true;
+            document.getElementById("wait").checked = true;
           }
 
           window.scrollTo({ top: 0, behavior: "smooth" });
