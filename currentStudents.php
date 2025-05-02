@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id']))
 
 // Fetch all students
 try {
+    // Test with simpler query for debugging
     $query = "
         SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
         FROM student s
