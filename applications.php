@@ -94,6 +94,7 @@
           <p><strong>Status:</strong> ${app.status}</p>
           <button class="edit-btn" data-index="${index}">Edit</button>
           <button class="delete-btn" data-index="${index}">Delete</button>
+          <button class="wait-btn" data-index="${wait}">Waitlisted</button>
           <hr />
         `;
         container.appendChild(div);
