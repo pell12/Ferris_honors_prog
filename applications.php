@@ -8,7 +8,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
+<?php
+require 'includes/database-connection.php';
 
+$query = "
+    SELECT student_id, first_name, last_name, fsu_email
+    FROM student
+";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">

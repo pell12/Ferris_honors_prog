@@ -8,6 +8,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
+<?php
+require 'includes/database-connection.php';
+
+$query = "
+    SELECT s.student_id, s.last_name, s.first_name, s.middle_name, s.preferred_name, s.fsu_email, a.major
+    FROM student s
+    LEFT JOIN academic_records a ON s.student_id = a.student_id
+";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
 
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
