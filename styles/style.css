@@ -252,7 +252,7 @@ body {
 /*Table*/
 table {
     border-collapse: collapse;
-    border: 2px solid black;
+    border: 10px solid black;
 }
 
 /*caption {
@@ -266,20 +266,6 @@ th, td {
     padding: 8px 6px;
     text-align: center;
 }
-/*
-Student Events Section Styling
-*/
-.search-students {
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.search-students input {
-    padding: 6px;
-    width: 250px;
-    font-size: 14px;
-}
-
 /*
 Upload/Data Sync styling
 */
