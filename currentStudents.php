@@ -26,13 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id']))
 }
 
 // Fetch all students
-$query = "
-    SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
-    FROM student s
-    LEFT JOIN academic_records a ON s.student_id = a.student_id
-";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
+try {
+    $query = "
+        SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
+        FROM student s
+        LEFT JOIN academic_records a ON s.student_id = a.student_id
+    ";
+    $stmt = $pdo->query($query);
+    $students = $stmt->fetchAll();
+} catch (PDOException $e) {
+    echo 'Query failed: ' . $e->getMessage();
+}
+
 ?>
 
 <!DOCTYPE html>
