@@ -87,7 +87,10 @@ $students = $stmt->fetchAll();
           <td>$preferredName</td>
           <td>$major</td>
           <td><a href='mailto:$email'>$email</a></td>
-          <td><button onclick='viewDetails($studentId)'>View</button></td>
+          <td>
+              <button onclick='editRow(this)'>✏️</button>
+              <button onclick='deleteRow(this)'>❌</button>
+          </td>
         </tr>";
     }
     ?>
