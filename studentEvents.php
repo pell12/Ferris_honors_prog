@@ -6,9 +6,18 @@
     <title>Student Events</title>
     <link rel="stylesheet" href="styles/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    
 </head>
 <body>
+<?php
+require 'includes/database-connection.php';
+
+$query = "
+    SELECT student_id, first_name, last_name, fsu_email
+    FROM student
+";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
     <div class="container">
         <nav class="sidebar">
             <div class="logo">
@@ -74,6 +83,8 @@
 
             <div class="student-list">
                 <h2>Recorded Students & Activities</h2>
+                <label for="searchStudentId">Search by Student ID:</label>
+                <input type="text" id="searchStudentId" placeholder="Enter Student ID" onkeyup="filterByStudentId()">
                 <table>
                     <thead>
                         <tr>
@@ -86,7 +97,31 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="studentTableBody"></tbody>
+                    <tbody id="studentTableBody">
+                        <?php
+                        foreach ($students as $student) {
+                            $studentId = htmlspecialchars($student['student_id']);
+                            $firstName = htmlspecialchars($student['first_name']);
+                            $lastName = htmlspecialchars($student['last_name']);
+                            $email = htmlspecialchars($student['fsu_email']);
+                            $dateRecorded = date("m-d-Y");
+
+                            echo "
+                            <tr>
+                                <td>$studentId</td>
+                                <td>$firstName</td>
+                                <td>$lastName</td>
+                                <td><a href='mailto:$email'>$email</a></td>
+                                <td>—</td> <!-- Placeholder for Activity Type -->
+                                <td>$dateRecorded</td>
+                                <td>
+                                    <button onclick='editRow(this)'>✏️</button>
+                                    <button onclick='deleteRow(this)'>❌</button>
+                                </td>
+                            </tr>";
+                        }
+                        ?>
+                    </tbody>
                 </table>
             </div>
         </main>
@@ -160,6 +195,20 @@
             document.getElementById("studentForm").style.display = "none";
         }
 
+        function filterByStudentId() {
+            const input = document.getElementById("searchStudentId").value.trim().toLowerCase();
+            const table = document.getElementById("studentTableBody");
+            const rows = table.getElementsByTagName("tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                const studentIdCell = rows[i].getElementsByTagName("td")[0]; // First cell is Student ID
+                if (studentIdCell) {
+                    const studentId = studentIdCell.textContent || studentIdCell.innerText;
+                    rows[i].style.display = studentId.toLowerCase().includes(input) ? "" : "none";
+                }
+            }
+        }
+
         function editRow(btn) {
             const row = btn.parentElement.parentElement;
             document.getElementById("studentId").value = row.cells[0].innerText;
@@ -173,7 +222,12 @@
         }
 
         function deleteRow(btn) {
-            btn.parentElement.parentElement.remove();
+            const row = btn.parentElement.parentElement;
+            const confirmation = confirm("Are you sure you want to delete this record?");
+            
+            if (confirmation) {
+                row.remove();
+            }
         }
 
         function saveCertificateProgress() {
