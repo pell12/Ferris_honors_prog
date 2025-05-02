@@ -1,3 +1,15 @@
+<?php
+require 'includes/database-connection.php';
+
+// Fetch students from the database
+$query = "
+    SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
+    FROM student s
+    LEFT JOIN academic_records a ON s.student_id = a.student_id
+";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,191 +20,157 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-<?php
-require 'includes/database-connection.php';
-
-$query = "
-    SELECT student_id, first_name, last_name, fsu_email
-    FROM student
-";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
     </div>
-    <ul class="nav-links" id="sidebarLinks">
+    <ul class="nav-links">
       <li><a href="index.php">Dashboard</a></li>
-      <li><a href="applications.php" class="active">Applications</a></li>
-      <li><a href="currentStudents.php">Current Students</a></li>
+      <li><a href="applications.php">Applications</a></li>
+      <li><a href="currentStudents.php" class="active">Current Students</a></li>
       <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
       <li><a href="studentEvents.php">Student Events</a></li>
       <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
   </nav>
 
-  <!-- Top Search Bar -->
-  <div class="search-container">
-    <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
-    <button class="search-button" onclick="performSearch()">Search</button>
-    <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-    <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-  </div>
-
   <!-- Main Content -->
   <main class="content">
-    <h1>Applications</h1>
+    <h1>Current Students</h1>
 
-    <!-- Application Form -->
-    <form id="applicationForm" class="application-form">
-      <label for="name">Applicant Name:</label>
-      <input type="text" id="name" name="name" required />
+    <!-- Filter -->
+    <div class="filter-container">
+      <input type="text" id="filterName" placeholder="Filter by Name">
+      <input type="text" id="filterMajor" placeholder="Filter by Major">
+    </div>
 
-      <label for="studentId">Student ID</label>
-      <input type="text" id="studentId" name="studentId" required />
+    <!-- Add Student Form -->
+    <div class="form-container">
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Student Name" required />
+        <input type="text" id="studentId" placeholder="Student ID" required />
+        <input type="text" id="preferredName" placeholder="Preferred Name" />
+        <input type="text" id="major" placeholder="Major" required />
+        <input type="text" id="email" placeholder="Email" />
+        <button type="submit">Add Student</button>
+      </form>
+    </div>
 
-      <label for="program">Program Applied For:</label>
-      <input type="text" id="program" name="program" required />
-
-      <label for="date">Application Date:</label>
-      <input type="date" id="date" name="date" required />
-
-      <label>Status:</label><br />
-      <input type="radio" id="approve" name="status" value="Approved" />
-      <label for="approve">Approve</label>
-
-      <input type="radio" id="deny" name="status" value="Denied" />
-      <label for="deny">Deny</label>
-      <input type="radio" id="wait" name="status" value="Waitlisted" />
-
-      <br /><br />
-      <button type="submit">Submit</button>
-    </form>
-
-    <!-- Display Applications Here -->
-    <div id="applicationList"></div>
+    <!-- Student Table -->
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')">Student Name ▲▼</th>
+          <th>Student ID</th>
+          <th>Preferred Name</th>
+          <th onclick="sortTable('major')">Major ▲▼</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        <?php
+        // Loop through the students array and populate the table rows
+        foreach ($students as $student) {
+            // Extract student data from the array
+            $studentName = $student['first_name'] . ' ' . $student['middle_name'] . ' ' . $student['last_name'];
+            $studentId = htmlspecialchars($student['student_id']);
+            $preferredName = htmlspecialchars($student['preferred_name']);
+            $major = htmlspecialchars($student['major']);
+            $email = htmlspecialchars($student['fsu_email']);
+            
+            echo "
+            <tr>
+              <td>$studentName</td>
+              <td>$studentId</td>
+              <td>$preferredName</td>
+              <td>$major</td>
+              <td><a href='mailto:$email'>$email</a></td>
+              <td>
+                  <button onclick='editRow(this)'>✏️</button>
+                  <button onclick='deleteRow(this)'>❌</button>
+              </td>
+            </tr>";
+        }
+        ?>
+      </tbody>
+    </table>
   </main>
 
+  <!-- Script for Logic -->
   <script>
-    let editIndex = null;
+    const form = document.getElementById('studentForm');
+    const tableBody = document.getElementById('studentTableBody');
+    const filterName = document.getElementById('filterName');
+    const filterMajor = document.getElementById('filterMajor');
 
-    function performSearch() {
-      const query = document.getElementById("searchInput").value;
-      alert(query ? "Searching for: " + query : "Please enter a search query.");
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+
+    function updateStorage() {
+      localStorage.setItem('students', JSON.stringify(students));
+      renderTable();
     }
 
-    function signOut() {
-      alert("You have signed out.");
-    }
+    function renderTable() {
+      const nameQuery = filterName.value.toLowerCase();
+      const majorQuery = filterMajor.value.toLowerCase();
 
-    function displayApplications() {
-      const applications = JSON.parse(localStorage.getItem("applications")) || [];
-      const container = document.getElementById("applicationList");
-      container.innerHTML = "";
+      tableBody.innerHTML = '';
 
-      applications.forEach((app, index) => {
-        const div = document.createElement("div");
-        div.classList.add("application-entry");
-        div.innerHTML = `
-          <p><strong>Name:</strong> ${app.name}</p>
-          <p><strong>Student ID:</strong> ${app.studentId}</p>
-          <p><strong>Program:</strong> ${app.program}</p>
-          <p><strong>Date:</strong> ${app.date}</p>
-          <p><strong>Status:</strong> ${app.status}</p>
-          <button class="edit-btn" data-index="${index}">Edit</button>
-          <button class="delete-btn" data-index="${index}">Delete</button>
-          <button class="wait-btn" data-index="${wait}">Waitlisted</button>
-          <hr />
-        `;
-        container.appendChild(div);
-      });
-
-      // Delete functionality
-      document.querySelectorAll(".delete-btn").forEach((button) => {
-        button.addEventListener("click", function () {
-          const index = this.getAttribute("data-index");
-          const applications = JSON.parse(localStorage.getItem("applications")) || [];
-          applications.splice(index, 1);
-          localStorage.setItem("applications", JSON.stringify(applications));
-          displayApplications();
+      students
+        .filter(s =>
+          s.name.toLowerCase().includes(nameQuery) &&
+          s.major.toLowerCase().includes(majorQuery)
+        )
+        .forEach((student, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.studentId}</td>
+            <td>${student.preferredName || ''}</td>
+            <td>${student.major}</td>
+            <td>${student.email || ''}</td>
+            <td>
+              <button onclick="editStudent(${index})">✏️</button>
+              <button onclick="deleteStudent(${index})">❌</button>
+            </td>
+          `;
+          tableBody.appendChild(row);
         });
-      });
-
-      // Edit functionality
-      document.querySelectorAll(".edit-btn").forEach((button) => {
-        button.addEventListener("click", function () {
-          editIndex = this.getAttribute("data-index");
-          const app = JSON.parse(localStorage.getItem("applications"))[editIndex];
-
-          document.getElementById("name").value = app.name;
-          document.getElementById("studentId").value = app.studentId;
-          document.getElementById("program").value = app.program;
-          document.getElementById("date").value = app.date;
-
-          if (app.status === "Approved") {
-            document.getElementById("approve").checked = true;
-          } else if (app.status === "Denied") {
-            document.getElementById("deny").checked = true;
-          } else if (app.status === "Waitlisted"){
-            document.getElementById("wait").checked = true;
-          }
-
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-      });
     }
 
-    document.getElementById("applicationForm").addEventListener("submit", function (e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-
-      const name = document.getElementById("name").value;
-      const studentId = document.getElementById("studentId").value;
-      const program = document.getElementById("program").value;
-      const date = document.getElementById("date").value;
-      const status = document.querySelector('input[name="status"]:checked')?.value;
-
-      if (!status) {
-        alert("Please select a status.");
-        return;
-      }
-
-      const applications = JSON.parse(localStorage.getItem("applications")) || [];
-      const newEntry = { name, studentId, program, date, status };
-
-      if (editIndex === null) {
-        applications.push(newEntry);
-      } else {
-        applications[editIndex] = newEntry;
-        editIndex = null;
-      }
-
-      localStorage.setItem("applications", JSON.stringify(applications));
-      alert("Application saved successfully!");
-      displayApplications();
-      this.reset();
+      const student = {
+        name: document.getElementById('name').value,
+        studentId: document.getElementById('studentId').value,
+        preferredName: document.getElementById('preferredName').value,
+        major: document.getElementById('major').value,
+        email: document.getElementById('email').value
+      };
+      students.push(student);
+      updateStorage();
+      form.reset();
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      displayApplications();
-    });
+    function editStudent(index) {
+      const student = students[index];
+      document.getElementById('name').value = student.name;
+      document.getElementById('studentId').value = student.studentId;
+      document.getElementById('preferredName').value = student.preferredName;
+      document.getElementById('major').value = student.major;
+      document.getElementById('email').value = student.email;
+      students.splice(index, 1);
+      updateStorage();
+    }
 
-    fetch("sidebarNavigationHandler.json")
-      .then((response) => response.json())
-      .then((data) => {
-        const sidebar = document.getElementById("sidebarLinks");
-        let currentPage = window.location.pathname.split("/").pop() || "index.php";
+    function deleteStudent(index) {
+      students.splice(index, 1);
+      updateStorage();
+    }
 
-        data.forEach((item) => {
-          const li = document.createElement("li");
-          const isActive = item.url.includes(currentPage) ? "active" : "";
-          li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
-          sidebar.appendChild(li);
-        });
-      })
-      .catch((error) => console.error("Error loading navigation:", error));
-  </script>
-
-</body>
-</html>
+    function sortTable(key) {
+      students.sort((a, b) => a[key].locale
+::contentReference[oaicite:0]{index=0}
+ 
