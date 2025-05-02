@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id']))
     $lastName = $_POST['last_name'];
     $preferredName = $_POST['preferred_name'];
     $major = $_POST['major'];
-    $email = $_POST['email'];
+    $email = isset($_POST['email']) ? $_POST['email'] : '';  // Check if email exists
 
     $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, major = ?, fsu_email = ? WHERE student_id = ?");
     $stmt->execute([$firstName, $lastName, $preferredName, $major, $email, $studentId]);
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id']))
 
 // Fetch all students
 try {
-    // Test with simpler query for debugging
+    // Ensure `major` is present in the correct table
     $query = "
         SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
         FROM student s
@@ -77,7 +77,7 @@ try {
         <input type="text" id="studentId" name="studentId" placeholder="Student ID" required />
         <input type="text" id="preferredName" name="preferredName" placeholder="Preferred Name" />
         <input type="text" id="major" name="major" placeholder="Major" required />
-        <input type="email" id="email" name="email" placeholder="Email" />
+        <input type="email" id="email" name="email" placeholder="Email" required />
         <button type="submit">Add Student</button>
       </form>
     </div>
