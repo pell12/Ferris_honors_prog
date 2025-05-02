@@ -6,7 +6,6 @@
   <title>Semester Grade Report</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  
 </head>
 <body>
 
@@ -38,7 +37,7 @@
         <input type="text" id="crn" placeholder="CRN" required />
         <input type="text" id="midTerm" placeholder="Mid-Term Grade" required />
         <input type="text" id="finalGrade" placeholder="Final Grade" required />
-        <button type="submit">Add Entry</button>
+        <button type="submit">Save Entry</button>
       </form>
     </div>
 
@@ -66,6 +65,7 @@
   <script>
     const form = document.getElementById('gradeForm');
     const tableBody = document.getElementById('gradeTableBody');
+    let editIndex = null; // Track if editing
 
     // Load existing grades on page load
     window.addEventListener('DOMContentLoaded', loadGrades);
@@ -85,9 +85,15 @@
       };
 
       const grades = JSON.parse(localStorage.getItem('grades')) || [];
-      grades.push(entry);
-      localStorage.setItem('grades', JSON.stringify(grades));
 
+      if (editIndex === null) {
+        grades.push(entry);
+      } else {
+        grades[editIndex] = entry;
+        editIndex = null;
+      }
+
+      localStorage.setItem('grades', JSON.stringify(grades));
       form.reset();
       loadGrades();
     });
@@ -107,10 +113,29 @@
           <td>${grade.crn}</td>
           <td>${grade.midTerm}</td>
           <td>${grade.finalGrade}</td>
-          <td><button class="delete-btn" onclick="deleteGrade(${index})">Delete</button></td>
+          <td>
+            <button onclick="editGrade(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteGrade(${index})">Delete</button>
+          </td>
         `;
         tableBody.appendChild(row);
       });
+    }
+
+    // Edit grade
+    function editGrade(index) {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      const grade = grades[index];
+
+      document.getElementById('lastName').value = grade.lastName;
+      document.getElementById('firstName').value = grade.firstName;
+      document.getElementById('studentId').value = grade.studentId;
+      document.getElementById('course').value = grade.course;
+      document.getElementById('crn').value = grade.crn;
+      document.getElementById('midTerm').value = grade.midTerm;
+      document.getElementById('finalGrade').value = grade.finalGrade;
+
+      editIndex = index;
     }
 
     // Delete grade by index

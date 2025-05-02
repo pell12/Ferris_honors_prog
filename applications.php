@@ -14,7 +14,7 @@
     <div class="logo">
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
     </div>
-    <ul class="nav-links">
+    <ul class="nav-links" id="sidebarLinks">
       <li><a href="index.php">Dashboard</a></li>
       <li><a href="applications.php" class="active">Applications</a></li>
       <li><a href="currentStudents.php">Current Students</a></li>
@@ -24,62 +24,60 @@
     </ul>
   </nav>
 
-
-    <!-- Top Search Bar -->
-    <div class="search-container">
-      <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
-      <button class="search-button" onclick="performSearch()">Search</button>
-      <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-      <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-    </div>
-
-    <!-- Main Content -->
-    <main class="content">
-      <h1>Applications</h1>
-
-      <!-- Application Form -->
-      <form id="applicationForm" class="application-form">
-        <label for="name">Applicant Name:</label>
-        <input type="text" id="name" name="name" required />
-
-        <label for="studentId">Student ID</label>
-        <input type="text" id="studentId" name="studentId" required />
-
-        <label for="program">Program Applied For:</label>
-        <input type="text" id="program" name="program" required />
-
-        <label for="date">Application Date:</label>
-        <input type="date" id="date" name="date" required />
-
-        <label>Status:</label><br />
-        <input type="radio" id="approve" name="status" value="Approved" required />
-        <label for="approve">Approve</label>
-
-        <input type="radio" id="deny" name="status" value="Denied" />
-        <label for="deny">Deny</label>
-
-        <br /><br />
-        <button type="submit">Submit</button>
-      </form>
-
-      <!-- Display Applications Here -->
-      <div id="applicationList"></div>
-    </main>
+  <!-- Top Search Bar -->
+  <div class="search-container">
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
+    <button class="search-button" onclick="performSearch()">Search</button>
+    <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+    <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
   </div>
 
+  <!-- Main Content -->
+  <main class="content">
+    <h1>Applications</h1>
+
+    <!-- Application Form -->
+    <form id="applicationForm" class="application-form">
+      <label for="name">Applicant Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="studentId">Student ID</label>
+      <input type="text" id="studentId" name="studentId" required />
+
+      <label for="program">Program Applied For:</label>
+      <input type="text" id="program" name="program" required />
+
+      <label for="date">Application Date:</label>
+      <input type="date" id="date" name="date" required />
+
+      <label>Status:</label><br />
+      <input type="radio" id="approve" name="status" value="Approved" />
+      <label for="approve">Approve</label>
+
+      <input type="radio" id="deny" name="status" value="Denied" />
+      <label for="deny">Deny</label>
+      <input type="radio" id="wait" name="status" value="Waitlisted" />
+
+      <br /><br />
+      <button type="submit">Submit</button>
+    </form>
+
+    <!-- Display Applications Here -->
+    <div id="applicationList"></div>
+  </main>
+
   <script>
-    // Search bar functionality
+    let editIndex = null;
+
     function performSearch() {
       const query = document.getElementById("searchInput").value;
       alert(query ? "Searching for: " + query : "Please enter a search query.");
     }
 
-    // Sign-out functionality
     function signOut() {
       alert("You have signed out.");
     }
 
-    // Display applications from localStorage
     function displayApplications() {
       const applications = JSON.parse(localStorage.getItem("applications")) || [];
       const container = document.getElementById("applicationList");
@@ -94,15 +92,15 @@
           <p><strong>Program:</strong> ${app.program}</p>
           <p><strong>Date:</strong> ${app.date}</p>
           <p><strong>Status:</strong> ${app.status}</p>
+          <button class="edit-btn" data-index="${index}">Edit</button>
           <button class="delete-btn" data-index="${index}">Delete</button>
           <hr />
         `;
         container.appendChild(div);
       });
 
-      // Attach delete button events
-      const deleteButtons = document.querySelectorAll(".delete-btn");
-      deleteButtons.forEach((button) => {
+      // Delete functionality
+      document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", function () {
           const index = this.getAttribute("data-index");
           const applications = JSON.parse(localStorage.getItem("applications")) || [];
@@ -111,9 +109,31 @@
           displayApplications();
         });
       });
+
+      // Edit functionality
+      document.querySelectorAll(".edit-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          editIndex = this.getAttribute("data-index");
+          const app = JSON.parse(localStorage.getItem("applications"))[editIndex];
+
+          document.getElementById("name").value = app.name;
+          document.getElementById("studentId").value = app.studentId;
+          document.getElementById("program").value = app.program;
+          document.getElementById("date").value = app.date;
+
+          if (app.status === "Approved") {
+            document.getElementById("approve").checked = true;
+          } else if (app.status === "Denied") {
+            document.getElementById("deny").checked = true;
+          } else if (app.status === "Waitlisted"){
+            document.getElementByID("wait").checked = true;
+          }
+
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
     }
 
-    // Handle form submission
     document.getElementById("applicationForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -129,20 +149,25 @@
       }
 
       const applications = JSON.parse(localStorage.getItem("applications")) || [];
-      applications.push({ name, studentId, program, date, status });
-      localStorage.setItem("applications", JSON.stringify(applications));
+      const newEntry = { name, studentId, program, date, status };
 
-      alert("Application submitted successfully!");
+      if (editIndex === null) {
+        applications.push(newEntry);
+      } else {
+        applications[editIndex] = newEntry;
+        editIndex = null;
+      }
+
+      localStorage.setItem("applications", JSON.stringify(applications));
+      alert("Application saved successfully!");
       displayApplications();
       this.reset();
     });
 
-    // Load applications on page load
     window.addEventListener("DOMContentLoaded", () => {
       displayApplications();
     });
 
-    // Sidebar loader
     fetch("sidebarNavigationHandler.json")
       .then((response) => response.json())
       .then((data) => {
@@ -158,5 +183,6 @@
       })
       .catch((error) => console.error("Error loading navigation:", error));
   </script>
+
 </body>
 </html>
