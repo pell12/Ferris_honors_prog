@@ -97,8 +97,8 @@ $students = $stmt->fetchAll();
             <td><?= htmlspecialchars($student['major']) ?></td>
             <td><a href="mailto:<?= htmlspecialchars($student['fsu_email']) ?>"><?= htmlspecialchars($student['fsu_email']) ?></a></td>
             <td>
-              <a href="currentStudents.php?edit_id=<?= $student['student_id'] ?>">Edit</a> |
-              <a href="currentStudents.php?delete_id=<?= $student['student_id'] ?>" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+              <a href="javascript:void(0)" onclick="editStudent('<?= $student['student_id'] ?>', '<?= addslashes($student['first_name']) ?>', '<?= addslashes($student['last_name']) ?>', '<?= addslashes($student['preferred_name']) ?>', '<?= addslashes($student['major']) ?>', '<?= addslashes($student['fsu_email']) ?>')">✏️</a> |
+              <a href="currentStudents.php?delete_id=<?= $student['student_id'] ?>" onclick="return confirm('Are you sure you want to delete this student?');">❌</a>
             </td>
           </tr>
         <?php endforeach; ?>
@@ -138,6 +138,5 @@ $students = $stmt->fetchAll();
       document.getElementById('editFormContainer').style.display = 'none';
     }
   </script>
-</body
-::contentReference[oaicite:0]{index=0}
- 
+</body>
+</html>
