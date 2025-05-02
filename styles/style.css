@@ -252,7 +252,7 @@ body {
 /*Table*/
 table {
     border-collapse: collapse;
-    border: 2px solid black;
+    border: 10px solid black;
 }
 
 /*caption {
@@ -265,10 +265,8 @@ th, td {
     border: 1px solid black;
     padding: 8px 6px;
     text-align: center;
-
+}
 /*
 Upload/Data Sync styling
 */
 
-
-}

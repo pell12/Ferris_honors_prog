@@ -15,7 +15,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Sidebar Navigation -->
     <nav class="sidebar">
       <div class="logo">
         <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
@@ -30,12 +29,10 @@
             </ul>
     </nav>
 
-    <!-- Main Content Area -->
     <main class="content">
       <h1>Upload / Data Sync</h1>
       <p>Upload Cultural Events or Service Activities from Excel.</p>
 
-      <!-- Upload Controls -->
       <div class="upload-controls">
         <label for="uploadType">Select Upload Type:</label>
         <select id="uploadType">
@@ -50,13 +47,11 @@
         <button onclick="handleFileUpload()">Preview Data</button>
       </div>
 
-      <!-- Preview Table -->
       <div id="previewContainer"></div>
     </main>
   </div>
 
   <script>
-    // Load Sidebar Navigation
     fetch('sidebarNavigationHandler.json')
       .then(response => response.json())
       .then(data => {
