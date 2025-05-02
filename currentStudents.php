@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ferris Honors Program - Current Students</title>
-  <link rel="stylesheet" href="styles/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-</head>
-
-<body>
 <?php
 require 'includes/database-connection.php';
 
@@ -20,6 +9,16 @@ $query = "
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ferris Honors Program - Current Students</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -70,30 +69,27 @@ $students = $stmt->fetchAll();
         </tr>
       </thead>
       <tbody id="studentTableBody">
-      <?php
-    // Loop through the students array and populate the table rows
-    foreach ($students as $student) {
-        // Extract student data from the array
-        $studentName = $student['first_name'] . ' ' . $student['middle_name'] . ' ' . $student['last_name'];
-        $studentId = htmlspecialchars($student['student_id']);
-        $preferredName = htmlspecialchars($student['preferred_name']);
-        $major = htmlspecialchars($student['major']);
-        $email = htmlspecialchars($student['fsu_email']);
-        
-        echo "
-        <tr>
-          <td>$studentName</td>
-          <td>$studentId</td>
-          <td>$preferredName</td>
-          <td>$major</td>
-          <td><a href='mailto:$email'>$email</a></td>
-          <td>
-              <button onclick='editRow(this)'>✏️</button>
-              <button onclick='deleteRow(this)'>❌</button>
-          </td>
-        </tr>";
-    }
-    ?>
+        <?php
+        foreach ($students as $student) {
+            $studentName = $student['first_name'] . ' ' . $student['middle_name'] . ' ' . $student['last_name'];
+            $studentId = htmlspecialchars($student['student_id']);
+            $preferredName = htmlspecialchars($student['preferred_name']);
+            $major = htmlspecialchars($student['major']);
+            $email = htmlspecialchars($student['fsu_email']);
+            echo "
+            <tr>
+              <td>$studentName</td>
+              <td>$studentId</td>
+              <td>$preferredName</td>
+              <td>$major</td>
+              <td><a href='mailto:$email'>$email</a></td>
+              <td>
+                  <button onclick='editRow(this)'>✏️</button>
+                  <button onclick='deleteRow(this)'>❌</button>
+              </td>
+            </tr>";
+        }
+        ?>
       </tbody>
     </table>
   </main>
@@ -112,7 +108,7 @@ $students = $stmt->fetchAll();
       renderTable();
     }
 
-    /**function renderTable() {
+    function renderTable() {
       const nameQuery = filterName.value.toLowerCase();
       const majorQuery = filterMajor.value.toLowerCase();
 
@@ -135,7 +131,7 @@ $students = $stmt->fetchAll();
           `;
           tableBody.appendChild(row);
         });
-    }**/
+    }
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -164,7 +160,6 @@ $students = $stmt->fetchAll();
     filterName.addEventListener('input', renderTable);
     filterMajor.addEventListener('input', renderTable);
 
-    renderTable();
-  </script>
-</body>
-</html>
+
+::contentReference[oaicite:0]{index=0}
+ 
