@@ -1,3 +1,18 @@
+<?php
+// Include database connection
+require 'includes/database-connection.php';
+
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+
+try {
+    $stmt = $pdo->query($query);
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error executing query: " . $e->getMessage());
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,15 +24,6 @@
 </head>
 
 <body>
-<?php
-require 'includes/database-connection.php'; // Make sure this file contains your database connection
-
-// Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
-
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -44,37 +50,6 @@ $students = $stmt->fetchAll();
   <!-- Main Content -->
   <main class="content">
     <h1>Current Students</h1>
-
-    <!-- Application Form  -->
-    <form id="applicationForm" class="application-form" method="POST" action="#">
-      <h2>New Application</h2>
-      <label for="name">Applicant Name:</label>
-      <input type="text" id="name" name="name" required />
-
-      <label for="studentId">Student ID</label>
-      <input type="text" id="studentId" name="studentId" required />
-
-      <label for="program">Program Applied For:</label>
-      <input type="text" id="program" name="program" required />
-
-      <label for="date">Application Date:</label>
-      <input type="date" id="date" name="date" required />
-
-      <label>Status:</label><br />
-      <input type="radio" id="approve" name="status" value="Approved" />
-      <label for="approve">Approve</label>
-
-      <input type="radio" id="deny" name="status" value="Denied" />
-      <label for="deny">Deny</label>
-
-      <input type="radio" id="wait" name="status" value="Waitlisted" />
-      <label for="wait">Waitlist</label>
-
-      <br /><br />
-      <button type="submit">Submit</button>
-    </form>
-
-    <hr />
 
     <!-- Display Students Here -->
     <div id="studentList">
@@ -112,7 +87,7 @@ $students = $stmt->fetchAll();
       alert("You have signed out.");
     }
 
-    // Handle student entry actions (edit, waitlist, delete)
+    // Handle student entry actions (delete)
     document.addEventListener("DOMContentLoaded", function () {
 
       // Delete button
@@ -126,7 +101,7 @@ $students = $stmt->fetchAll();
             })
             .then(response => response.json())
             .then(data => {
-              if(data.success) {
+              if (data.success) {
                 alert("Student deleted successfully.");
                 location.reload(); // Refresh the page after deletion
               } else {
