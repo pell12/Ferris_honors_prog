@@ -1,3 +1,48 @@
+<?php
+require 'includes/database-connection.php';
+
+// Insert form data if form was submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $sql = "
+        INSERT INTO academic_records (
+            academic_id, student_id, hs_gpa, act_comp, sat_comp,
+            first_semester_as_honors, last_semester_gpa, total_credits_gpa_hours,
+            total_credits_attempted, last_semester_at_ferris, total_semester_at_ferris,
+            major, college
+        ) VALUES (
+            :academic_id, :student_id, :hs_gpa, :act_comp, :sat_comp,
+            :first_semester_as_honors, :last_semester_gpa, :total_credits_gpa_hours,
+            :total_credits_attempted, :last_semester_at_ferris, :total_semester_at_ferris,
+            :major, :college
+        )
+    ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':academic_id' => $_POST['academic_id'],
+        ':student_id' => $_POST['student_id'],
+        ':hs_gpa' => $_POST['hs_gpa'],
+        ':act_comp' => $_POST['act_comp'],
+        ':sat_comp' => $_POST['sat_comp'],
+        ':first_semester_as_honors' => $_POST['first_semester_as_honors'],
+        ':last_semester_gpa' => $_POST['last_semester_gpa'],
+        ':total_credits_gpa_hours' => $_POST['total_credits_gpa_hours'],
+        ':total_credits_attempted' => $_POST['total_credits_attempted'],
+        ':last_semester_at_ferris' => $_POST['last_semester_at_ferris'],
+        ':total_semester_at_ferris' => $_POST['total_semester_at_ferris'],
+        ':major' => $_POST['major'],
+        ':college' => $_POST['college'],
+    ]);
+
+    header("Location: semesterGradeReport.php"); // Redirect to avoid form resubmission
+    exit;
+}
+
+// Fetch existing records
+$query = "SELECT * FROM academic_records";
+$records = $pdo->query($query)->fetchAll();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,157 +50,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Semester Grade Report</title>
   <link rel="stylesheet" href="styles/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-<?php
-require 'includes/database-connection.php';
 
-$query = "
-    SELECT s.student_id, s.last_name, s.first_name, s.middle_name, s.preferred_name, s.fsu_email, a.major
-    FROM student s
-    LEFT JOIN academic_records a ON s.student_id = a.student_id
-";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
+<!-- Sidebar Navigation -->
+<nav class="sidebar">
+  <!-- sidebar content -->
+</nav>
 
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="logo">
-      <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.php">Dashboard</a></li>
-      <li><a href="applications.php">Applications</a></li>
-      <li><a href="currentStudents.php">Current Students</a></li>
-      <li><a href="semesterGradeReport.php" class="active">Semester Grade Report</a></li>
-      <li><a href="studentEvents.php">Student Events</a></li>
-      <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
-    </ul>
-  </nav>
+<main class="content">
+  <h1>Semester Grade Report</h1>
 
-  <main class="content">
-    <h1>Semester Grade Report</h1>
+  <!-- Add Entry Form -->
+  <div class="form-container">
+    <form method="POST" action="semesterGradeReport.php">
+      <input type="text" name="academic_id" placeholder="Academic ID" required />
+      <input type="text" name="student_id" placeholder="Student ID" required />
+      <input type="text" name="hs_gpa" placeholder="HS GPA" required />
+      <input type="text" name="act_comp" placeholder="ACT Comp" required />
+      <input type="text" name="sat_comp" placeholder="SAT Comp" required />
+      <input type="text" name="first_semester_as_honors" placeholder="First Semester as Honors" required />
+      <input type="text" name="last_semester_gpa" placeholder="Last Semester GPA" required />
+      <input type="text" name="total_credits_gpa_hours" placeholder="Total Credits GPA Hours" required />
+      <input type="text" name="total_credits_attempted" placeholder="Total Credits Attempted"/>
+      <input type="text" name="last_semester_at_ferris" placeholder="Last Semester at Ferris"/>
+      <input type="text" name="total_semester_at_ferris" placeholder="Total Semester at Ferris"/>
+      <input type="text" name="major" placeholder="Major"/>
+      <input type="text" name="college" placeholder="College"/>
+      <button type="submit">Save Entry</button>
+    </form>
+  </div>
 
-    <!-- Add Entry Form -->
-    <div class="form-container">
-      <form id="gradeForm">
-        <input type="text" id="lastName" placeholder="Last Name" required />
-        <input type="text" id="firstName" placeholder="First Name" required />
-        <input type="text" id="studentId" placeholder="Student ID" required />
-        <input type="text" id="course" placeholder="Course" required />
-        <input type="text" id="crn" placeholder="CRN" required />
-        <input type="text" id="midTerm" placeholder="Mid-Term Grade" required />
-        <input type="text" id="finalGrade" placeholder="Final Grade" required />
-        <button type="submit">Save Entry</button>
-      </form>
-    </div>
-
-    <!-- Grade Table -->
-    <table>
-      <caption>Semester Grade Report</caption>
-      <thead>
+  <!-- Grade Table -->
+  <table>
+    <caption>Semester Grade Report</caption>
+    <thead>
+      <tr>
+        <th>Academic ID</th>
+        <th>Student ID</th>
+        <th>HS GPA</th>
+        <th>ACT Comp</th>
+        <th>SAT Comp</th>
+        <th>First Semester as Honors</th>
+        <th>Last Semester GPA</th>
+        <th>Total Credits GPA Hours</th>
+        <th>Total Credits Attempted</th>
+        <th>Last Semester at Ferris</th>
+        <th>Total Semester at Ferris</th>
+        <th>Major</th>
+        <th>College</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($records as $record): ?>
         <tr>
-          <th>Last Name</th>
-          <th>First Name</th>
-          <th>Student ID</th>
-          <th>Course</th>
-          <th>CRN</th>
-          <th>Mid-Term Grade</th>
-          <th>Final Grade</th>
-          <th>Actions</th>
+          <td><?= htmlspecialchars($record['academic_id']) ?></td>
+          <td><?= htmlspecialchars($record['student_id']) ?></td>
+          <td><?= htmlspecialchars($record['hs_gpa']) ?></td>
+          <td><?= htmlspecialchars($record['act_comp']) ?></td>
+          <td><?= htmlspecialchars($record['sat_comp']) ?></td>
+          <td><?= htmlspecialchars($record['first_semester_as_honors']) ?></td>
+          <td><?= htmlspecialchars($record['last_semester_gpa']) ?></td>
+          <td><?= htmlspecialchars($record['total_credits_gpa_hours']) ?></td>
+          <td><?= htmlspecialchars($record['total_credits_attempted']) ?></td>
+          <td><?= htmlspecialchars($record['last_semester_at_ferris']) ?></td>
+          <td><?= htmlspecialchars($record['total_semester_at_ferris']) ?></td>
+          <td><?= htmlspecialchars($record['major']) ?></td>
+          <td><?= htmlspecialchars($record['college']) ?></td>
         </tr>
-      </thead>
-      <tbody id="gradeTableBody">
-        <!-- Dynamic rows go here -->
-      </tbody>
-    </table>
-  </main>
-
-  <script>
-    const form = document.getElementById('gradeForm');
-    const tableBody = document.getElementById('gradeTableBody');
-    let editIndex = null; // Track if editing
-
-    // Load existing grades on page load
-    window.addEventListener('DOMContentLoaded', loadGrades);
-
-    // Handle form submission
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const entry = {
-        lastName: document.getElementById('lastName').value,
-        firstName: document.getElementById('firstName').value,
-        studentId: document.getElementById('studentId').value,
-        course: document.getElementById('course').value,
-        crn: document.getElementById('crn').value,
-        midTerm: document.getElementById('midTerm').value,
-        finalGrade: document.getElementById('finalGrade').value
-      };
-
-      const grades = JSON.parse(localStorage.getItem('grades')) || [];
-
-      if (editIndex === null) {
-        grades.push(entry);
-      } else {
-        grades[editIndex] = entry;
-        editIndex = null;
-      }
-
-      localStorage.setItem('grades', JSON.stringify(grades));
-      form.reset();
-      loadGrades();
-    });
-
-    // Load and render grades from localStorage
-    function loadGrades() {
-      const grades = JSON.parse(localStorage.getItem('grades')) || [];
-      tableBody.innerHTML = '';
-
-      grades.forEach((grade, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${grade.lastName}</td>
-          <td>${grade.firstName}</td>
-          <td>${grade.studentId}</td>
-          <td>${grade.course}</td>
-          <td>${grade.crn}</td>
-          <td>${grade.midTerm}</td>
-          <td>${grade.finalGrade}</td>
-          <td>
-            <button onclick="editGrade(${index})">Edit</button>
-            <button class="delete-btn" onclick="deleteGrade(${index})">Delete</button>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-
-    // Edit grade
-    function editGrade(index) {
-      const grades = JSON.parse(localStorage.getItem('grades')) || [];
-      const grade = grades[index];
-
-      document.getElementById('lastName').value = grade.lastName;
-      document.getElementById('firstName').value = grade.firstName;
-      document.getElementById('studentId').value = grade.studentId;
-      document.getElementById('course').value = grade.course;
-      document.getElementById('crn').value = grade.crn;
-      document.getElementById('midTerm').value = grade.midTerm;
-      document.getElementById('finalGrade').value = grade.finalGrade;
-
-      editIndex = index;
-    }
-
-    // Delete grade by index
-    function deleteGrade(index) {
-      const grades = JSON.parse(localStorage.getItem('grades')) || [];
-      grades.splice(index, 1);
-      localStorage.setItem('grades', JSON.stringify(grades));
-      loadGrades();
-    }
-  </script>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</main>
 </body>
 </html>
