@@ -134,7 +134,7 @@ list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
 
     <input type="text" id="current_campus" name="current_campus" placeholder="Campus" />
 
-    <br><label>Status:</label><br />
+    <br><label>Status:</label>
     <input type="radio" id="approved" name="status" value="Approved" />
     <label for="approved">Approved</label>
     <input type="radio" id="denied" name="status" value="Denied" />
