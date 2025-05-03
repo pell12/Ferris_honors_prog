@@ -12,7 +12,7 @@
 <?php
 require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
-// Fetch students from the database
+// Fetch students from the database, including the 'status' column
 $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
@@ -45,7 +45,7 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form -->
+    <!-- Application Form  -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
       <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
@@ -87,6 +87,7 @@ $students = $stmt->fetchAll();
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
                   <p><strong>Status:</strong> {$student['status']}</p>
+                  
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
