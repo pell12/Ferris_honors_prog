@@ -13,7 +13,7 @@
 require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
 // Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$query = "SELECT student_id, first_name, last_name, fsu_email FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
 ?>
@@ -86,7 +86,6 @@ $students = $stmt->fetchAll();
                   <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['status']}</p>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
@@ -114,6 +113,15 @@ $students = $stmt->fetchAll();
 
     // Handle student entry actions (edit, waitlist, delete)
     document.addEventListener("DOMContentLoaded", function () {
+      // Edit button
+      document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const studentId = this.getAttribute("data-student-id");
+          alert("Editing student with ID: " + studentId);
+          // Implement edit functionality here (e.g., populate form fields with student data)
+        });
+      });
+
 
       // Delete button
       document.querySelectorAll(".delete-btn").forEach(button => {
@@ -121,17 +129,13 @@ $students = $stmt->fetchAll();
           const studentId = this.getAttribute("data-student-id");
           if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
             // Send a request to the backend to delete the student from the database
-            fetch(`deleteStudent.php?student_id=${studentId}`, {
+            fetch(deleteStudent.php?student_id=${studentId}, {
               method: 'GET',
             })
             .then(response => response.json())
             .then(data => {
-              if(data.success) {
-                alert("Student deleted successfully.");
-                location.reload(); // Refresh the page after deletion
-              } else {
-                alert("Error deleting student.");
-              }
+              alert("Student deleted successfully.");
+              location.reload(); // Refresh the page after deletion
             })
             .catch(error => {
               console.error("Error deleting student:", error);

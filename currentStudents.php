@@ -12,28 +12,27 @@ if (isset($_GET['delete_id'])) {
 
 // Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id'])) {
-  $studentId = $_POST['update_student_id'];
-  $firstName = $_POST['first_name'];
-  $lastName = $_POST['last_name'];
-  $preferredName = $_POST['preferred_name'];
-  $major = $_POST['major'];
-  $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $studentId = $_POST['update_student_id'];
+    $firstName = $_POST['first_name'];
+    $lastName = $_POST['last_name'];
+    $preferredName = $_POST['preferred_name'];
+    $major = $_POST['major'];
+    $email = isset($_POST['fsu_email']) ? $_POST['fsu_email'] : ''; // ✅ Fixed here
 
-  // Update student table (excluding major)
-  $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, fsu_email = ? WHERE student_id = ?");
-  $stmt->execute([$firstName, $lastName, $preferredName, $email, $studentId]);
+    // Update student table (excluding major)
+    $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, fsu_email = ? WHERE student_id = ?");
+    $stmt->execute([$firstName, $lastName, $preferredName, $email, $studentId]);
 
-  // Update academic_records table for major
-  $stmt2 = $pdo->prepare("UPDATE academic_records SET major = ? WHERE student_id = ?");
-  $stmt2->execute([$major, $studentId]);
+    // Update academic_records table for major
+    $stmt2 = $pdo->prepare("UPDATE academic_records SET major = ? WHERE student_id = ?");
+    $stmt2->execute([$major, $studentId]);
 
-  header("Location: currentStudents.php");
-  exit;
+    header("Location: currentStudents.php");
+    exit;
 }
 
 // Fetch all students
 try {
-    // Ensure `major` is present in the correct table
     $query = "
         SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
         FROM student s
@@ -44,7 +43,6 @@ try {
 } catch (PDOException $e) {
     echo 'Query failed: ' . $e->getMessage();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -117,7 +115,7 @@ try {
       </tbody>
     </table>
 
-    <!-- Edit Student Form (Hidden by default) -->
+    <!-- Edit Student Form -->
     <div id="editFormContainer" style="display: none;">
       <h2>Edit Student</h2>
       <form id="editForm" method="POST" action="currentStudents.php">
@@ -126,7 +124,7 @@ try {
         <input type="text" name="last_name" id="edit_last_name" placeholder="Last Name" required />
         <input type="text" name="preferred_name" id="edit_preferred_name" placeholder="Preferred Name" />
         <input type="text" name="major" id="edit_major" placeholder="Major" required />
-        <input type="email" name="fsu_email" id="edit_fsu_email" placeholder="Email" />
+        <input type="email" name="fsu_email" id="edit_fsu_email" placeholder="Email" /> <!-- ✅ field name matches PHP -->
         <button type="submit">Update Student</button>
         <button type="button" onclick="cancelEdit()">Cancel</button>
       </form>
