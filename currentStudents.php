@@ -12,17 +12,23 @@ if (isset($_GET['delete_id'])) {
 
 // Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id'])) {
-    $studentId = $_POST['update_student_id'];
-    $firstName = $_POST['first_name'];
-    $lastName = $_POST['last_name'];
-    $preferredName = $_POST['preferred_name'];
-    $major = $_POST['major'];
-    $email = isset($_POST['email']) ? $_POST['email'] : '';  // Check if email exists
+  $studentId = $_POST['update_student_id'];
+  $firstName = $_POST['first_name'];
+  $lastName = $_POST['last_name'];
+  $preferredName = $_POST['preferred_name'];
+  $major = $_POST['major'];
+  $email = isset($_POST['email']) ? $_POST['email'] : '';
 
-    $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, major = ?, fsu_email = ? WHERE student_id = ?");
-    $stmt->execute([$firstName, $lastName, $preferredName, $major, $email, $studentId]);
-    header("Location: currentStudents.php");
-    exit;
+  // Update student table (excluding major)
+  $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, fsu_email = ? WHERE student_id = ?");
+  $stmt->execute([$firstName, $lastName, $preferredName, $email, $studentId]);
+
+  // Update academic_records table for major
+  $stmt2 = $pdo->prepare("UPDATE academic_records SET major = ? WHERE student_id = ?");
+  $stmt2->execute([$major, $studentId]);
+
+  header("Location: currentStudents.php");
+  exit;
 }
 
 // Fetch all students
