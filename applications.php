@@ -1,3 +1,73 @@
+<?php
+// Include database connection
+require 'includes/database-connection.php';
+
+// Fetch students and status data
+function fetchStudentsAndStatus($pdo) {
+    $query_students = "SELECT student_id, first_name, middle_name, preferred_name, last_name, fsu_email, 
+                       current_street_1, current_city, current_state, current_zip, 
+                       ethnicity_current, gender, current_campus, personal_email, cell_phone_corrected 
+                       FROM student";
+    
+    $query_status = "SELECT student_id, app_decision FROM Status";
+    
+    try {
+        $stmt_students = $pdo->query($query_students);
+        $students = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt_status = $pdo->query($query_status);
+        $statuses = $stmt_status->fetchAll(PDO::FETCH_ASSOC);
+
+        $status_lookup = [];
+        foreach ($statuses as $status) {
+            $status_lookup[$status['student_id']] = $status['app_decision'];
+        }
+
+        return [$students, $status_lookup];
+
+    } catch (PDOException $e) {
+        die("Error executing query: " . $e->getMessage());
+    }
+}
+
+// Handle form submission to add a new student
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $fields = [
+        'student_id', 'first_name', 'middle_name', 'preferred_name', 'last_name', 'fsu_email', 
+        'current_street_1', 'current_city', 'current_state', 'current_zip', 'ethnicity_current', 
+        'gender', 'current_campus', 'personal_email', 'cell_phone_corrected', 'status'
+    ];
+
+    // Extract and sanitize POST data
+    $data = array_map(fn($field) => $_POST[$field] ?? null, $fields);
+
+    $insert_query = "INSERT INTO student (
+        student_id, first_name, middle_name, preferred_name, last_name, fsu_email, 
+        current_street_1, current_city, current_state, current_zip, 
+        ethnicity_current, gender, current_campus, personal_email, cell_phone_corrected
+    ) VALUES (
+        :student_id, :first_name, :middle_name, :preferred_name, :last_name, :fsu_email,
+        :current_street_1, :current_city, :current_state, :current_zip,
+        :ethnicity_current, :gender, :current_campus, :personal_email, :cell_phone_corrected
+    )";
+
+    $stmt_insert = $pdo->prepare($insert_query);
+
+    try {
+        $stmt_insert->execute(array_combine(
+            array_map(fn($field) => ":$field", $fields),
+            $data
+        ));
+
+        echo "<script>alert('New student added successfully!');</script>";
+    } catch (PDOException $e) {
+        echo "<script>alert('Error adding student: " . $e->getMessage() . "');</script>";
+    }
+}
+
+list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,41 +104,61 @@
     <h1>Applications</h1>
     <h2>Add New Student</h2>
     <form method="POST" action="currentStudents.php">
-      <!-- Grouping form fields together for cleaner layout -->
-      <div class="form-group">
-        <label for="student_id">Student ID:</label><input type="text" id="student_id" name="student_id" required />
-        <label for="first_name">First Name:</label><input type="text" id="first_name" name="first_name" required />
-        <label for="middle_name">Middle Name:</label><input type="text" id="middle_name" name="middle_name" />
-        <label for="preferred_name">Preferred Name:</label><input type="text" id="preferred_name" name="preferred_name" />
-      </div>
 
-      <div class="form-group">
-        <label for="last_name">Last Name:</label><input type="text" id="last_name" name="last_name" required />
-        <label for="fsu_email">FSU Email:</label><input type="email" id="fsu_email" name="fsu_email" required />
-        <label for="personal_email">Personal Email:</label><input type="email" id="personal_email" name="personal_email" />
-        <label for="cell_phone_corrected">Cell Phone:</label><input type="text" id="cell_phone_corrected" name="cell_phone_corrected" />
-      </div>
+      <label for="student_id">Student ID:</label>
+      <input type="text" id="student_id" name="student_id" required />
 
-      <div class="form-group">
-        <label for="current_street_1">Street Address:</label><input type="text" id="current_street_1" name="current_street_1" />
-        <label for="current_city">City:</label><input type="text" id="current_city" name="current_city" />
-        <label for="current_state">State:</label><input type="text" id="current_state" name="current_state" />
-        <label for="current_zip">Zip Code:</label><input type="text" id="current_zip" name="current_zip" />
-      </div>
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name" required />
 
-      <div class="form-group">
-        <label for="ethnicity_current">Ethnicity:</label><input type="text" id="ethnicity_current" name="ethnicity_current" />
-        <label for="gender">Gender:</label><input type="text" id="gender" name="gender" />
-        <label for="current_campus">Campus:</label><input type="text" id="current_campus" name="current_campus" />
-      </div>
+      <label for="middle_name">Middle Name:</label>
+      <input type="text" id="middle_name" name="middle_name" />
 
-      <div class="form-group">
-        <label>Status:</label>
-        <input type="radio" id="approved" name="status" value="Approved" /><label for="approved">Approved</label>
-        <input type="radio" id="denied" name="status" value="Denied" /><label for="denied">Denied</label>
-        <input type="radio" id="waitlisted" name="status" value="Waitlisted" /><label for="waitlisted">Waitlisted</label>
-      </div>
+      <label for="preferred_name">Preferred Name:</label>
+      <input type="text" id="preferred_name" name="preferred_name" />
 
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" required />
+
+      <label for="fsu_email">FSU Email:</label>
+      <input type="email" id="fsu_email" name="fsu_email" required />
+
+      <label for="personal_email">Personal Email:</label>
+      <input type="email" id="personal_email" name="personal_email" />
+
+      <label for="cell_phone_corrected">Cell Phone:</label>
+      <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" />
+
+      <label for="current_street_1">Street Address:</label>
+      <input type="text" id="current_street_1" name="current_street_1" />
+
+      <label for="current_city">City:</label>
+      <input type="text" id="current_city" name="current_city" />
+
+      <label for="current_state">State:</label>
+      <input type="text" id="current_state" name="current_state" />
+
+      <label for="current_zip">Zip Code:</label>
+      <input type="text" id="current_zip" name="current_zip" />
+
+      <label for="ethnicity_current">Ethnicity:</label>
+      <input type="text" id="ethnicity_current" name="ethnicity_current" />
+
+      <label for="gender">Gender:</label>
+      <input type="text" id="gender" name="gender" />
+
+      <label for="current_campus">Campus:</label>
+      <input type="text" id="current_campus" name="current_campus" />
+
+      <label>Status:</label><br />
+      <input type="radio" id="approved" name="status" value="Approved" />
+      <label for="approved">Approved</label>
+      <input type="radio" id="denied" name="status" value="Denied" />
+      <label for="denied">Denied</label>
+      <input type="radio" id="waitlisted" name="status" value="Waitlisted" />
+      <label for="waitlisted">Waitlisted</label>
+
+      <br /><br />
       <button type="submit">Add Student</button>
     </form>
 
@@ -77,7 +167,7 @@
     <!-- Display Students -->
     <div id="studentList">
       <?php
-      if ($students) {
+      if (!empty($students)) { // Use !empty() to check if the students array has data
           foreach ($students as $student) {
               $status = $status_lookup[$student['student_id']] ?? 'Not Available';
               echo "
