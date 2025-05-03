@@ -255,6 +255,11 @@ table {
     border: 10px solid black;
 }
 
+table td {
+font-weight: normal;
+}
+
+
 /*caption {
     caption-side: top;
     padding: 10px;
