@@ -13,7 +13,7 @@
 require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
 // Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email FROM student";
+$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
 ?>
@@ -45,7 +45,7 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form  -->
+    <!-- Application Form -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
       <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
@@ -86,9 +86,7 @@ $students = $stmt->fetchAll();
                   <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  
-                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
-                  <button class='wait-btn' data-student-id='{$student['student_id']}'>Mark Waitlisted</button>
+                  <p><strong>Status:</strong> {$student['status']}</p>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
@@ -114,26 +112,8 @@ $students = $stmt->fetchAll();
       alert("You have signed out.");
     }
 
-    // Handle student entry actions (edit, waitlist, delete)
+    // Handle student entry actions (delete)
     document.addEventListener("DOMContentLoaded", function () {
-      // Edit button
-      document.querySelectorAll(".edit-btn").forEach(button => {
-        button.addEventListener("click", function () {
-          const studentId = this.getAttribute("data-student-id");
-          alert("Editing student with ID: " + studentId);
-          // Implement edit functionality here (e.g., populate form fields with student data)
-        });
-      });
-
-      // Waitlist button
-      document.querySelectorAll(".wait-btn").forEach(button => {
-        button.addEventListener("click", function () {
-          const studentId = this.getAttribute("data-student-id");
-          alert("Student with ID " + studentId + " marked as Waitlisted.");
-          // Implement waitlist functionality here (e.g., update status in the database)
-        });
-      });
-
       // Delete button
       document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function () {
