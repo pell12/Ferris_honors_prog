@@ -7,12 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         INSERT INTO academic_records (
             academic_id, student_id, hs_gpa, act_comp, sat_comp,
             first_semester_as_honors, last_semester_gpa, total_credits_gpa_hours,
-            total_credits_attempted, last_semester_at_ferris, total_semester_at_ferris,
+            total_credits_attempted, last_semester_at_ferris, total_semesters_at_ferris,
             major, college
         ) VALUES (
             :academic_id, :student_id, :hs_gpa, :act_comp, :sat_comp,
             :first_semester_as_honors, :last_semester_gpa, :total_credits_gpa_hours,
-            :total_credits_attempted, :last_semester_at_ferris, :total_semester_at_ferris,
+            :total_credits_attempted, :last_semester_at_ferris, :total_semesters_at_ferris,
             :major, :college
         )
     ";
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':total_credits_gpa_hours' => $_POST['total_credits_gpa_hours'],
         ':total_credits_attempted' => $_POST['total_credits_attempted'],
         ':last_semester_at_ferris' => $_POST['last_semester_at_ferris'],
-        ':total_semester_at_ferris' => $_POST['total_semester_at_ferris'],
+        ':total_semester_at_ferris' => $_POST['total_semesters_at_ferris'],
         ':major' => $_POST['major'],
         ':college' => $_POST['college'],
     ]);
@@ -48,15 +48,26 @@ $records = $pdo->query($query)->fetchAll();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Semester Grade Report</title>
+  <title>Ferris Honors Program - Current Students</title>
   <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.php">Dashboard</a></li>
+      <li><a href="applications.php">Applications</a></li>
+      <li><a href="currentStudents.php">Current Students</a></li>
+      <li><a href="semesterGradeReport.php" class="active">Semester Grade Report</a></li>
+      <li><a href="studentEvents.php">Student Events</a></li>
+      <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
+    </ul>
+  </nav>
 
-<!-- Sidebar Navigation -->
-<nav class="sidebar">
-  <!-- sidebar content -->
-</nav>
 
 <main class="content">
   <h1>Semester Grade Report</h1>
@@ -74,7 +85,7 @@ $records = $pdo->query($query)->fetchAll();
       <input type="text" name="total_credits_gpa_hours" placeholder="Total Credits GPA Hours" required />
       <input type="text" name="total_credits_attempted" placeholder="Total Credits Attempted"/>
       <input type="text" name="last_semester_at_ferris" placeholder="Last Semester at Ferris"/>
-      <input type="text" name="total_semester_at_ferris" placeholder="Total Semester at Ferris"/>
+      <input type="text" name="total_semesters_at_ferris" placeholder="Total Semester at Ferris"/>
       <input type="text" name="major" placeholder="Major"/>
       <input type="text" name="college" placeholder="College"/>
       <button type="submit">Save Entry</button>
@@ -96,7 +107,7 @@ $records = $pdo->query($query)->fetchAll();
         <th>Total Credits GPA Hours</th>
         <th>Total Credits Attempted</th>
         <th>Last Semester at Ferris</th>
-        <th>Total Semester at Ferris</th>
+        <th>Total Semesters at Ferris</th>
         <th>Major</th>
         <th>College</th>
       </tr>
@@ -114,7 +125,7 @@ $records = $pdo->query($query)->fetchAll();
           <td><?= htmlspecialchars($record['total_credits_gpa_hours']) ?></td>
           <td><?= htmlspecialchars($record['total_credits_attempted']) ?></td>
           <td><?= htmlspecialchars($record['last_semester_at_ferris']) ?></td>
-          <td><?= htmlspecialchars($record['total_semester_at_ferris']) ?></td>
+          <td><?= htmlspecialchars($record['total_semesters_at_ferris']) ?></td>
           <td><?= htmlspecialchars($record['major']) ?></td>
           <td><?= htmlspecialchars($record['college']) ?></td>
         </tr>
