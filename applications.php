@@ -43,7 +43,31 @@ $students = $stmt->fetchAll();
 
   <!-- Main Content -->
   <main class="content">
-    <h1>Applications</h1>
+    <h1>Current Students</h1>
+
+    <!-- Display Students Here -->
+    <div id="studentList">
+      <?php
+      if ($students) {
+          foreach ($students as $student) {
+              echo "
+                <div class='student-entry'>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  
+                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
+                  <button class='wait-btn' data-student-id='{$student['student_id']}'>Mark Waitlisted</button>
+                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
+                  <hr />
+                </div>
+              ";
+          }
+      } else {
+          echo "<p>No students found in the database.</p>";
+      }
+      ?>
+    </div>
 
     <!-- Application Form -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
@@ -73,139 +97,61 @@ $students = $stmt->fetchAll();
       <button type="submit">Submit</button>
     </form>
 
-    <!-- Display Students Here -->
-    <div id="studentList">
-      <?php
-      if ($students) {
-          foreach ($students as $student) {
-              echo "
-                <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <hr />
-                </div>
-              ";
-          }
-      } else {
-          echo "<p>No students found in the database.</p>";
-      }
-      ?>
-    </div>
-
-    <!-- Display Applications Here -->
-    <div id="applicationList"></div>
   </main>
 
   <script>
-    let editIndex = null;
-
+    // Function to perform search
     function performSearch() {
       const query = document.getElementById("searchInput").value;
       alert(query ? "Searching for: " + query : "Please enter a search query.");
     }
 
+    // Function to handle sign-out
     function signOut() {
       alert("You have signed out.");
     }
 
-    function displayApplications() {
-      const applications = JSON.parse(localStorage.getItem("applications")) || [];
-      const container = document.getElementById("applicationList");
-      container.innerHTML = "";
-
-      applications.forEach((app, index) => {
-        const div = document.createElement("div");
-        div.classList.add("application-entry");
-        div.innerHTML = `
-          <p><strong>Name:</strong> ${app.name}</p>
-          <p><strong>Student ID:</strong> ${app.studentId}</p>
-          <p><strong>Program:</strong> ${app.program}</p>
-          <p><strong>Date:</strong> ${app.date}</p>
-          <p><strong>Status:</strong> ${app.status}</p>
-          <button class="edit-btn" data-index="${index}">Edit</button>
-          <button class="delete-btn" data-index="${index}">Delete</button>
-          <button class="wait-btn" data-index="${index}">Mark Waitlisted</button>
-          <hr />
-        `;
-        container.appendChild(div);
-      });
-
-      document.querySelectorAll(".delete-btn").forEach((button) => {
+    // Handle student entry actions (edit, waitlist, delete)
+    document.addEventListener("DOMContentLoaded", function () {
+      // Edit button
+      document.querySelectorAll(".edit-btn").forEach(button => {
         button.addEventListener("click", function () {
-          const index = this.getAttribute("data-index");
-          const applications = JSON.parse(localStorage.getItem("applications")) || [];
-          applications.splice(index, 1);
-          localStorage.setItem("applications", JSON.stringify(applications));
-          displayApplications();
+          const studentId = this.getAttribute("data-student-id");
+          alert("Editing student with ID: " + studentId);
+          // Implement edit functionality here (e.g., populate form fields with student data)
         });
       });
 
-      document.querySelectorAll(".edit-btn").forEach((button) => {
+      // Waitlist button
+      document.querySelectorAll(".wait-btn").forEach(button => {
         button.addEventListener("click", function () {
-          editIndex = this.getAttribute("data-index");
-          const app = JSON.parse(localStorage.getItem("applications"))[editIndex];
+          const studentId = this.getAttribute("data-student-id");
+          alert("Student with ID " + studentId + " marked as Waitlisted.");
+          // Implement waitlist functionality here (e.g., update status in the database)
+        });
+      });
 
-          document.getElementById("name").value = app.name;
-          document.getElementById("studentId").value = app.studentId;
-          document.getElementById("program").value = app.program;
-          document.getElementById("date").value = app.date;
-
-          if (app.status === "Approved") {
-            document.getElementById("approve").checked = true;
-          } else if (app.status === "Denied") {
-            document.getElementById("deny").checked = true;
-          } else if (app.status === "Waitlisted") {
-            document.getElementById("wait").checked = true;
+      // Delete button
+      document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const studentId = this.getAttribute("data-student-id");
+          if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
+            // Send a request to the backend to delete the student from the database
+            fetch(`deleteStudent.php?student_id=${studentId}`, {
+              method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+              alert("Student deleted successfully.");
+              location.reload(); // Refresh the page after deletion
+            })
+            .catch(error => {
+              console.error("Error deleting student:", error);
+              alert("Error deleting student.");
+            });
           }
-
-          window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
-
-      document.querySelectorAll(".wait-btn").forEach((button) => {
-        button.addEventListener("click", function () {
-          const index = this.getAttribute("data-index");
-          const applications = JSON.parse(localStorage.getItem("applications")) || [];
-          applications[index].status = "Waitlisted";
-          localStorage.setItem("applications", JSON.stringify(applications));
-          displayApplications();
-        });
-      });
-    }
-
-    document.getElementById("applicationForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const name = document.getElementById("name").value;
-      const studentId = document.getElementById("studentId").value;
-      const program = document.getElementById("program").value;
-      const date = document.getElementById("date").value;
-      const status = document.querySelector('input[name="status"]:checked')?.value;
-
-      if (!status) {
-        alert("Please select a status.");
-        return;
-      }
-
-      const applications = JSON.parse(localStorage.getItem("applications")) || [];
-      const newEntry = { name, studentId, program, date, status };
-
-      if (editIndex === null) {
-        applications.push(newEntry);
-      } else {
-        applications[editIndex] = newEntry;
-        editIndex = null;
-      }
-
-      localStorage.setItem("applications", JSON.stringify(applications));
-      alert("Application saved successfully!");
-      displayApplications();
-      this.reset();
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      displayApplications();
     });
   </script>
 
