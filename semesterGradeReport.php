@@ -172,8 +172,8 @@ $records = $pdo->query("SELECT * FROM academic_records")->fetchAll();
           <td><?= htmlspecialchars($record['major']) ?></td>
           <td><?= htmlspecialchars($record['college']) ?></td>
           <td class="action-btns">
-            <a href="?edit=<?= urlencode($record['academic_id']) ?>">Edit</a>
-            <a href="?delete=<?= urlencode($record['academic_id']) ?>" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</a>
+            <a href="?edit=<?= urlencode($record['academic_id']) ?>">✏️</a>
+            <a href="?delete=<?= urlencode($record['academic_id']) ?>" onclick="return confirm('Are you sure you want to delete this entry?');">❌</a>
           </td>
         </tr>
       <?php endforeach; ?>
