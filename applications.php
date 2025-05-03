@@ -1,33 +1,3 @@
-<?php
-require 'includes/database-connection.php'; // Ensure this is pointing to the correct file
-
-// Debugging: Check if the connection is successful
-if ($pdo) {
-    echo "Database connected successfully.";
-} else {
-    echo "Failed to connect to the database.";
-}
-
-try {
-    // Fetch students from the database
-    $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-    $stmt = $pdo->query($query);
-
-    // Check if the query was successful and fetch the data
-    if ($stmt === false) {
-        throw new Exception("Query failed to execute: " . implode(" ", $pdo->errorInfo()));
-    }
-
-    $students = $stmt->fetchAll();
-} catch (PDOException $e) {
-    // Catch PDO exceptions (e.g., query error) and display the error message
-    die("Database query error: " . $e->getMessage());
-} catch (Exception $e) {
-    // Catch general exceptions for other errors
-    die("Error: " . $e->getMessage());
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,6 +9,14 @@ try {
 </head>
 
 <body>
+<?php
+require 'includes/database-connection.php'; // Make sure this file contains your database connection
+
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email FROM student";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
 
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
@@ -67,6 +45,35 @@ try {
   <main class="content">
     <h1>Current Students</h1>
 
+    <!-- Application Form  -->
+    <form id="applicationForm" class="application-form" method="POST" action="#">
+      <h2>New Application</h2>
+      <label for="name">Applicant Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="studentId">Student ID</label>
+      <input type="text" id="studentId" name="studentId" required />
+
+      <label for="program">Program Applied For:</label>
+      <input type="text" id="program" name="program" required />
+
+      <label for="date">Application Date:</label>
+      <input type="date" id="date" name="date" required />
+
+      <label>Status:</label><br />
+      <input type="radio" id="approve" name="status" value="Approved" />
+      <label for="approve">Approve</label>
+
+      <input type="radio" id="deny" name="status" value="Denied" />
+      <label for="deny">Deny</label>
+
+      <input type="radio" id="wait" name="status" value="Waitlisted" />
+      <label for="wait">Waitlist</label>
+
+      <br /><br />
+      <button type="submit">Submit</button>
+    </form>
+
     <hr />
 
     <!-- Display Students Here -->
@@ -74,32 +81,18 @@ try {
       <?php
       if ($students) {
           foreach ($students as $student) {
-              // Display the status of each student
-              $statusLabel = "";
-              switch ($student['status']) {
-                  case 'Approved':
-                      $statusLabel = "<span style='color: green;'>Accepted</span>";
-                      break;
-                  case 'Denied':
-                      $statusLabel = "<span style='color: red;'>Denied</span>";
-                      break;
-                  case 'Waitlisted':
-                      $statusLabel = "<span style='color: orange;'>Waitlisted</span>";
-                      break;
-                  default:
-                      $statusLabel = "<span>Unknown Status</span>";
-                      break;
-              }
-
               echo "
-                  <div class='student-entry'>
-                    <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                    <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                    <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                    <p><strong>Status:</strong> {$statusLabel}</p>
-                    <hr />
-                  </div>
-                ";
+                <div class='student-entry'>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  
+                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
+                  <button class='wait-btn' data-student-id='{$student['student_id']}'>Mark Waitlisted</button>
+                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
+                  <hr />
+                </div>
+              ";
           }
       } else {
           echo "<p>No students found in the database.</p>";
@@ -120,6 +113,49 @@ try {
     function signOut() {
       alert("You have signed out.");
     }
+
+    // Handle student entry actions (edit, waitlist, delete)
+    document.addEventListener("DOMContentLoaded", function () {
+      // Edit button
+      document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const studentId = this.getAttribute("data-student-id");
+          alert("Editing student with ID: " + studentId);
+          // Implement edit functionality here (e.g., populate form fields with student data)
+        });
+      });
+
+      // Waitlist button
+      document.querySelectorAll(".wait-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const studentId = this.getAttribute("data-student-id");
+          alert("Student with ID " + studentId + " marked as Waitlisted.");
+          // Implement waitlist functionality here (e.g., update status in the database)
+        });
+      });
+
+      // Delete button
+      document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const studentId = this.getAttribute("data-student-id");
+          if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
+            // Send a request to the backend to delete the student from the database
+            fetch(`deleteStudent.php?student_id=${studentId}`, {
+              method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+              alert("Student deleted successfully.");
+              location.reload(); // Refresh the page after deletion
+            })
+            .catch(error => {
+              console.error("Error deleting student:", error);
+              alert("Error deleting student.");
+            });
+          }
+        });
+      });
+    });
   </script>
 
 </body>
