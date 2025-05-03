@@ -45,32 +45,9 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Display Students Here -->
-    <div id="studentList">
-      <?php
-      if ($students) {
-          foreach ($students as $student) {
-              echo "
-                <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  
-                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
-                  <button class='wait-btn' data-student-id='{$student['student_id']}'>Mark Waitlisted</button>
-                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
-                  <hr />
-                </div>
-              ";
-          }
-      } else {
-          echo "<p>No students found in the database.</p>";
-      }
-      ?>
-    </div>
-
-    <!-- Application Form -->
+    <!-- Application Form  -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
+      <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
       <input type="text" id="name" name="name" required />
 
@@ -96,6 +73,32 @@ $students = $stmt->fetchAll();
       <br /><br />
       <button type="submit">Submit</button>
     </form>
+
+    <hr />
+
+    <!-- Display Students Here -->
+    <div id="studentList">
+      <?php
+      if ($students) {
+          foreach ($students as $student) {
+              echo "
+                <div class='student-entry'>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  
+                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
+                  <button class='wait-btn' data-student-id='{$student['student_id']}'>Mark Waitlisted</button>
+                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
+                  <hr />
+                </div>
+              ";
+          }
+      } else {
+          echo "<p>No students found in the database.</p>";
+      }
+      ?>
+    </div>
 
   </main>
 
