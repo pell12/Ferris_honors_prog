@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <!-- Main Content -->
   <main class="content">
-    <h1>Current Students</h1>
+    <h1>Applications</h1>
 
     <!-- Add New Student Form -->
     <h2>Add New Student</h2>
