@@ -104,62 +104,48 @@ list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
     <h1>Applications</h1>
     <h2>Add New Student</h2>
     <form method="POST" action="currentStudents.php">
-      <label for="student_id">Student ID:</label>
-      <input type="text" id="student_id" name="student_id" placeholder="Enter Student ID" required />
+    <input type="text" id="student_id" name="student_id" placeholder="Student ID" required />
 
-      <label for="first_name">First Name:</label>
-      <input type="text" id="first_name" name="first_name" placeholder="Enter First Name" required />
+    <input type="text" id="first_name" name="first_name" placeholder="First Name" required />
 
-      <label for="middle_name">Middle Name:</label>
-      <input type="text" id="middle_name" name="middle_name" placeholder="Enter Middle Name" />
+    <input type="text" id="middle_name" name="middle_name" placeholder="Middle Name" />
 
-      <label for="preferred_name">Preferred Name:</label>
-      <input type="text" id="preferred_name" name="preferred_name" placeholder="Enter Preferred Name" />
+    <input type="text" id="preferred_name" name="preferred_name" placeholder="Preferred Name" />
 
-      <label for="last_name">Last Name:</label>
-      <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" required />
+    <input type="text" id="last_name" name="last_name" placeholder="Last Name" required />
 
-      <label for="fsu_email">FSU Email:</label>
-      <input type="email" id="fsu_email" name="fsu_email" placeholder="Enter FSU Email" required />
+    <input type="email" id="fsu_email" name="fsu_email" placeholder="FSU Email" required />
 
-      <label for="personal_email">Personal Email:</label>
-      <input type="email" id="personal_email" name="personal_email" placeholder="Enter Personal Email" />
+    <input type="email" id="personal_email" name="personal_email" placeholder="Personal Email" />
 
-      <label for="cell_phone_corrected">Cell Phone:</label>
-      <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" placeholder="Enter Cell Phone" />
+    <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" placeholder="Cell Phone" />
 
-      <label for="current_street_1">Street Address:</label>
-      <input type="text" id="current_street_1" name="current_street_1" placeholder="Enter Street Address" />
+    <input type="text" id="current_street_1" name="current_street_1" placeholder="Street Address" />
 
-      <label for="current_city">City:</label>
-      <input type="text" id="current_city" name="current_city" placeholder="Enter City" />
+    <input type="text" id="current_city" name="current_city" placeholder="City" />
 
-      <label for="current_state">State:</label>
-      <input type="text" id="current_state" name="current_state" placeholder="Enter State" />
+    <input type="text" id="current_state" name="current_state" placeholder="State" />
 
-      <label for="current_zip">Zip Code:</label>
-      <input type="text" id="current_zip" name="current_zip" placeholder="Enter Zip Code" />
+    <input type="text" id="current_zip" name="current_zip" placeholder="Zip Code" />
 
-      <label for="ethnicity_current">Ethnicity:</label>
-      <input type="text" id="ethnicity_current" name="ethnicity_current" placeholder="Enter Ethnicity" />
+    <input type="text" id="ethnicity_current" name="ethnicity_current" placeholder="Ethnicity" />
 
-      <label for="gender">Gender:</label>
-      <input type="text" id="gender" name="gender" placeholder="Enter Gender" />
+    <input type="text" id="gender" name="gender" placeholder="Gender" />
 
-      <label for="current_campus">Campus:</label>
-      <input type="text" id="current_campus" name="current_campus" placeholder="Enter Campus" />
+    <input type="text" id="current_campus" name="current_campus" placeholder="Campus" />
 
-      <label>Status:</label><br />
-      <input type="radio" id="approved" name="status" value="Approved" />
-      <label for="approved">Approved</label>
-      <input type="radio" id="denied" name="status" value="Denied" />
-      <label for="denied">Denied</label>
-      <input type="radio" id="waitlisted" name="status" value="Waitlisted" />
-      <label for="waitlisted">Waitlisted</label>
+    <label>Status:</label><br />
+    <input type="radio" id="approved" name="status" value="Approved" />
+    <label for="approved">Approved</label>
+    <input type="radio" id="denied" name="status" value="Denied" />
+    <label for="denied">Denied</label>
+    <input type="radio" id="waitlisted" name="status" value="Waitlisted" />
+    <label for="waitlisted">Waitlisted</label>
 
-      <br /><br />
-      <button type="submit">Add Student</button>
-  </form>
+    <br /><br />
+    <button type="submit">Add Student</button>
+</form>
+
 
 
     <hr />
