@@ -3,20 +3,21 @@
 require 'includes/database-connection.php';
 
 // Fetch students from the database
-$query_students = "SELECT student_id, first_name, last_name, fsu_email FROM student";
-$query_status = "SELECT student_id, app_decision FROM Status"; // Assuming you want the status for each student
+$query_students = "SELECT student_id, first_name, middle_name, preferred_name, last_name, fsu_email, 
+                          current_street_1, current_city, current_state, current_zip, 
+                          ethnicity_current, gender, current_campus, personal_email, cell_phone_corrected 
+                   FROM student";
+
+$query_status = "SELECT student_id, app_decision FROM Status";
 
 // Try to fetch student data
 try {
-    // Execute the first query to get student details
     $stmt_students = $pdo->query($query_students);
     $students = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
 
-    // Execute the second query to get application decision for each student
     $stmt_status = $pdo->query($query_status);
     $statuses = $stmt_status->fetchAll(PDO::FETCH_ASSOC);
 
-    // Create a lookup array to map student_id to app_decision
     $status_lookup = [];
     foreach ($statuses as $status) {
         $status_lookup[$status['student_id']] = $status['app_decision'];
@@ -28,23 +29,52 @@ try {
 
 // Handle form submission to add a new student
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the form data
+    $student_id = $_POST['student_id'];
     $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $preferred_name = $_POST['preferred_name'];
     $last_name = $_POST['last_name'];
     $fsu_email = $_POST['fsu_email'];
+    $current_street_1 = $_POST['current_street_1'];
+    $current_city = $_POST['current_city'];
+    $current_state = $_POST['current_state'];
+    $current_zip = $_POST['current_zip'];
+    $ethnicity_current = $_POST['ethnicity_current'];
+    $gender = $_POST['gender'];
+    $current_campus = $_POST['current_campus'];
+    $personal_email = $_POST['personal_email'];
+    $cell_phone_corrected = $_POST['cell_phone_corrected'];
     $status = $_POST['status'];
 
-    // Prepare the SQL query to insert the new student
-    $insert_query = "INSERT INTO student (first_name, last_name, fsu_email, status) VALUES (:first_name, :last_name, :fsu_email, :status)";
+    $insert_query = "INSERT INTO student (
+        student_id, first_name, middle_name, preferred_name, last_name, fsu_email, 
+        current_street_1, current_city, current_state, current_zip, 
+        ethnicity_current, gender, current_campus, personal_email, cell_phone_corrected
+    ) VALUES (
+        :student_id, :first_name, :middle_name, :preferred_name, :last_name, :fsu_email,
+        :current_street_1, :current_city, :current_state, :current_zip,
+        :ethnicity_current, :gender, :current_campus, :personal_email, :cell_phone_corrected
+    )";
+
     $stmt_insert = $pdo->prepare($insert_query);
 
     try {
-        // Execute the insertion query
         $stmt_insert->execute([
+            ':student_id' => $student_id,
             ':first_name' => $first_name,
+            ':middle_name' => $middle_name,
+            ':preferred_name' => $preferred_name,
             ':last_name' => $last_name,
             ':fsu_email' => $fsu_email,
-            ':status' => $status
+            ':current_street_1' => $current_street_1,
+            ':current_city' => $current_city,
+            ':current_state' => $current_state,
+            ':current_zip' => $current_zip,
+            ':ethnicity_current' => $ethnicity_current,
+            ':gender' => $gender,
+            ':current_campus' => $current_campus,
+            ':personal_email' => $personal_email,
+            ':cell_phone_corrected' => $cell_phone_corrected
         ]);
 
         echo "<script>alert('New student added successfully!');</script>";
@@ -65,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-  <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
@@ -80,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </ul>
   </nav>
 
-  <!-- Top Search Bar -->
   <div class="search-container">
     <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
     <button class="search-button" onclick="performSearch()">Search</button>
@@ -88,15 +116,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
   </div>
 
-  <!-- Main Content -->
   <main class="content">
     <h1>Applications</h1>
-
-    <!-- Add New Student Form -->
     <h2>Add New Student</h2>
     <form method="POST" action="currentStudents.php">
+
+      <label for="student_id">Student ID:</label>
+      <input type="text" id="student_id" name="student_id" required />
+
       <label for="first_name">First Name:</label>
       <input type="text" id="first_name" name="first_name" required />
+
+      <label for="middle_name">Middle Name:</label>
+      <input type="text" id="middle_name" name="middle_name" />
+
+      <label for="preferred_name">Preferred Name:</label>
+      <input type="text" id="preferred_name" name="preferred_name" />
 
       <label for="last_name">Last Name:</label>
       <input type="text" id="last_name" name="last_name" required />
@@ -104,13 +139,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label for="fsu_email">FSU Email:</label>
       <input type="email" id="fsu_email" name="fsu_email" required />
 
+      <label for="personal_email">Personal Email:</label>
+      <input type="email" id="personal_email" name="personal_email" />
+
+      <label for="cell_phone_corrected">Cell Phone:</label>
+      <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" />
+
+      <label for="current_street_1">Street Address:</label>
+      <input type="text" id="current_street_1" name="current_street_1" />
+
+      <label for="current_city">City:</label>
+      <input type="text" id="current_city" name="current_city" />
+
+      <label for="current_state">State:</label>
+      <input type="text" id="current_state" name="current_state" />
+
+      <label for="current_zip">Zip Code:</label>
+      <input type="text" id="current_zip" name="current_zip" />
+
+      <label for="ethnicity_current">Ethnicity:</label>
+      <input type="text" id="ethnicity_current" name="ethnicity_current" />
+
+      <label for="gender">Gender:</label>
+      <input type="text" id="gender" name="gender" />
+
+      <label for="current_campus">Campus:</label>
+      <input type="text" id="current_campus" name="current_campus" />
+
       <label>Status:</label><br />
       <input type="radio" id="approved" name="status" value="Approved" />
       <label for="approved">Approved</label>
-
       <input type="radio" id="denied" name="status" value="Denied" />
       <label for="denied">Denied</label>
-
       <input type="radio" id="waitlisted" name="status" value="Waitlisted" />
       <label for="waitlisted">Waitlisted</label>
 
@@ -120,18 +180,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <hr />
 
-    <!-- Display Students Here -->
+    <!-- Display Students -->
     <div id="studentList">
       <?php
       if ($students) {
           foreach ($students as $student) {
-              // Get status for each student using the lookup table
               $status = isset($status_lookup[$student['student_id']]) ? $status_lookup[$student['student_id']] : 'Not Available';
               echo "
                 <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['middle_name']} {$student['last_name']} (Preferred: {$student['preferred_name']})</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']} | Personal: {$student['personal_email']}</p>
+                  <p><strong>Phone:</strong> {$student['cell_phone_corrected']}</p>
+                  <p><strong>Address:</strong> {$student['current_street_1']}, {$student['current_city']}, {$student['current_state']} {$student['current_zip']}</p>
+                  <p><strong>Gender:</strong> {$student['gender']} | <strong>Ethnicity:</strong> {$student['ethnicity_current']}</p>
+                  <p><strong>Campus:</strong> {$student['current_campus']}</p>
                   <p><strong>Status:</strong> {$status}</p>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
@@ -143,30 +206,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       ?>
     </div>
-
   </main>
 
   <script>
-    // Function to perform search
     function performSearch() {
       const query = document.getElementById("searchInput").value;
       alert(query ? "Searching for: " + query : "Please enter a search query.");
     }
 
-    // Function to handle sign-out
     function signOut() {
       alert("You have signed out.");
     }
 
-    // Handle student entry actions (delete)
     document.addEventListener("DOMContentLoaded", function () {
-
-      // Delete button
       document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function () {
           const studentId = this.getAttribute("data-student-id");
           if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
-            // Send a request to the backend to delete the student from the database
             fetch(`deleteStudent.php?student_id=${studentId}`, {
               method: 'GET',
             })
@@ -174,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .then(data => {
               if (data.success) {
                 alert("Student deleted successfully.");
-                location.reload(); // Refresh the page after deletion
+                location.reload();
               } else {
                 alert("Error deleting student.");
               }
@@ -188,6 +244,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       });
     });
   </script>
-
 </body>
 </html>
