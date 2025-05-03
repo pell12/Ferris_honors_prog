@@ -12,12 +12,16 @@
 <?php
 require 'includes/database-connection.php';
 
+// This block is unnecessary if you're not using $students anywhere below.
+// Keeping it commented for now in case you want to reuse later.
+/*
 $query = "
     SELECT student_id, first_name, last_name, fsu_email
     FROM student
 ";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
+*/
 ?>
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
@@ -47,7 +51,7 @@ $students = $stmt->fetchAll();
     <h1>Applications</h1>
 
     <!-- Application Form -->
-    <form id="applicationForm" class="application-form">
+    <form id="applicationForm" class="application-form" method="POST" action="#">
       <label for="name">Applicant Name:</label>
       <input type="text" id="name" name="name" required />
 
@@ -66,7 +70,9 @@ $students = $stmt->fetchAll();
 
       <input type="radio" id="deny" name="status" value="Denied" />
       <label for="deny">Deny</label>
+
       <input type="radio" id="wait" name="status" value="Waitlisted" />
+      <label for="wait">Waitlist</label>
 
       <br /><br />
       <button type="submit">Submit</button>
@@ -104,13 +110,12 @@ $students = $stmt->fetchAll();
           <p><strong>Status:</strong> ${app.status}</p>
           <button class="edit-btn" data-index="${index}">Edit</button>
           <button class="delete-btn" data-index="${index}">Delete</button>
-          <button class="wait-btn" data-index="${wait}">Waitlisted</button>
+          <button class="wait-btn" data-index="${index}">Mark Waitlisted</button>
           <hr />
         `;
         container.appendChild(div);
       });
 
-      // Delete functionality
       document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", function () {
           const index = this.getAttribute("data-index");
@@ -121,7 +126,6 @@ $students = $stmt->fetchAll();
         });
       });
 
-      // Edit functionality
       document.querySelectorAll(".edit-btn").forEach((button) => {
         button.addEventListener("click", function () {
           editIndex = this.getAttribute("data-index");
@@ -136,11 +140,21 @@ $students = $stmt->fetchAll();
             document.getElementById("approve").checked = true;
           } else if (app.status === "Denied") {
             document.getElementById("deny").checked = true;
-          } else if (app.status === "Waitlisted"){
+          } else if (app.status === "Waitlisted") {
             document.getElementById("wait").checked = true;
           }
 
           window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      document.querySelectorAll(".wait-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const index = this.getAttribute("data-index");
+          const applications = JSON.parse(localStorage.getItem("applications")) || [];
+          applications[index].status = "Waitlisted";
+          localStorage.setItem("applications", JSON.stringify(applications));
+          displayApplications();
         });
       });
     }
