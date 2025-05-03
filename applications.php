@@ -104,51 +104,50 @@ list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
     <h1>Applications</h1>
     <h2>Add New Student</h2>
     <form method="POST" action="currentStudents.php">
-
       <label for="student_id">Student ID:</label>
-      <input type="text" id="student_id" name="student_id" required />
+      <input type="text" id="student_id" name="student_id" placeholder="Enter Student ID" required />
 
       <label for="first_name">First Name:</label>
-      <input type="text" id="first_name" name="first_name" required />
+      <input type="text" id="first_name" name="first_name" placeholder="Enter First Name" required />
 
       <label for="middle_name">Middle Name:</label>
-      <input type="text" id="middle_name" name="middle_name" />
+      <input type="text" id="middle_name" name="middle_name" placeholder="Enter Middle Name" />
 
       <label for="preferred_name">Preferred Name:</label>
-      <input type="text" id="preferred_name" name="preferred_name" />
+      <input type="text" id="preferred_name" name="preferred_name" placeholder="Enter Preferred Name" />
 
       <label for="last_name">Last Name:</label>
-      <input type="text" id="last_name" name="last_name" required />
+      <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" required />
 
       <label for="fsu_email">FSU Email:</label>
-      <input type="email" id="fsu_email" name="fsu_email" required />
+      <input type="email" id="fsu_email" name="fsu_email" placeholder="Enter FSU Email" required />
 
       <label for="personal_email">Personal Email:</label>
-      <input type="email" id="personal_email" name="personal_email" />
+      <input type="email" id="personal_email" name="personal_email" placeholder="Enter Personal Email" />
 
       <label for="cell_phone_corrected">Cell Phone:</label>
-      <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" />
+      <input type="text" id="cell_phone_corrected" name="cell_phone_corrected" placeholder="Enter Cell Phone" />
 
       <label for="current_street_1">Street Address:</label>
-      <input type="text" id="current_street_1" name="current_street_1" />
+      <input type="text" id="current_street_1" name="current_street_1" placeholder="Enter Street Address" />
 
       <label for="current_city">City:</label>
-      <input type="text" id="current_city" name="current_city" />
+      <input type="text" id="current_city" name="current_city" placeholder="Enter City" />
 
       <label for="current_state">State:</label>
-      <input type="text" id="current_state" name="current_state" />
+      <input type="text" id="current_state" name="current_state" placeholder="Enter State" />
 
       <label for="current_zip">Zip Code:</label>
-      <input type="text" id="current_zip" name="current_zip" />
+      <input type="text" id="current_zip" name="current_zip" placeholder="Enter Zip Code" />
 
       <label for="ethnicity_current">Ethnicity:</label>
-      <input type="text" id="ethnicity_current" name="ethnicity_current" />
+      <input type="text" id="ethnicity_current" name="ethnicity_current" placeholder="Enter Ethnicity" />
 
       <label for="gender">Gender:</label>
-      <input type="text" id="gender" name="gender" />
+      <input type="text" id="gender" name="gender" placeholder="Enter Gender" />
 
       <label for="current_campus">Campus:</label>
-      <input type="text" id="current_campus" name="current_campus" />
+      <input type="text" id="current_campus" name="current_campus" placeholder="Enter Campus" />
 
       <label>Status:</label><br />
       <input type="radio" id="approved" name="status" value="Approved" />
@@ -160,7 +159,8 @@ list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
 
       <br /><br />
       <button type="submit">Add Student</button>
-    </form>
+  </form>
+
 
     <hr />
 
