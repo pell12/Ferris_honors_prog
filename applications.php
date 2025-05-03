@@ -1,6 +1,5 @@
 <?php
-// Include the database connection
-require 'includes/database-connection.php';
+require 'includes/database-connection.php'; // Ensure this is pointing to the correct file
 
 // Debugging: Check if the connection is successful
 if ($pdo) {
@@ -9,10 +8,24 @@ if ($pdo) {
     echo "Failed to connect to the database.";
 }
 
-// Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
+try {
+    // Fetch students from the database
+    $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+    $stmt = $pdo->query($query);
+
+    // Check if the query was successful and fetch the data
+    if ($stmt === false) {
+        throw new Exception("Query failed to execute: " . implode(" ", $pdo->errorInfo()));
+    }
+
+    $students = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // Catch PDO exceptions (e.g., query error) and display the error message
+    die("Database query error: " . $e->getMessage());
+} catch (Exception $e) {
+    // Catch general exceptions for other errors
+    die("Error: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -54,35 +67,6 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form -->
-    <form id="applicationForm" class="application-form" method="POST" action="#">
-      <h2>New Application</h2>
-      <label for="name">Applicant Name:</label>
-      <input type="text" id="name" name="name" required />
-
-      <label for="studentId">Student ID</label>
-      <input type="text" id="studentId" name="studentId" required />
-
-      <label for="program">Program Applied For:</label>
-      <input type="text" id="program" name="program" required />
-
-      <label for="date">Application Date:</label>
-      <input type="date" id="date" name="date" required />
-
-      <label>Status:</label><br />
-      <input type="radio" id="approve" name="status" value="Approved" />
-      <label for="approve">Approve</label>
-
-      <input type="radio" id="deny" name="status" value="Denied" />
-      <label for="deny">Deny</label>
-
-      <input type="radio" id="wait" name="status" value="Waitlisted" />
-      <label for="wait">Waitlist</label>
-
-      <br /><br />
-      <button type="submit">Submit</button>
-    </form>
-
     <hr />
 
     <!-- Display Students Here -->
@@ -113,16 +97,6 @@ $students = $stmt->fetchAll();
                     <p><strong>Student ID:</strong> {$student['student_id']}</p>
                     <p><strong>Email:</strong> {$student['fsu_email']}</p>
                     <p><strong>Status:</strong> {$statusLabel}</p>
-                    <form action='' method='POST'>
-                        <input type='hidden' name='student_id' value='{$student['student_id']}' />
-                        <select name='status'>
-                            <option value='Approved' ".($student['status'] == 'Approved' ? 'selected' : '').">Approved</option>
-                            <option value='Denied' ".($student['status'] == 'Denied' ? 'selected' : '').">Denied</option>
-                            <option value='Waitlisted' ".($student['status'] == 'Waitlisted' ? 'selected' : '').">Waitlisted</option>
-                        </select>
-                        <button type='submit' name='update_status'>Update Status</button>
-                    </form>
-                    <a href='?student_id={$student['student_id']}' class='delete-btn'>Delete</a>
                     <hr />
                   </div>
                 ";
