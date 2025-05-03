@@ -25,6 +25,33 @@ try {
 } catch (PDOException $e) {
     die("Error executing query: " . $e->getMessage());
 }
+
+// Handle form submission to add a new student
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the form data
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $fsu_email = $_POST['fsu_email'];
+    $status = $_POST['status'];
+
+    // Prepare the SQL query to insert the new student
+    $insert_query = "INSERT INTO student (first_name, last_name, fsu_email, status) VALUES (:first_name, :last_name, :fsu_email, :status)";
+    $stmt_insert = $pdo->prepare($insert_query);
+
+    try {
+        // Execute the insertion query
+        $stmt_insert->execute([
+            ':first_name' => $first_name,
+            ':last_name' => $last_name,
+            ':fsu_email' => $fsu_email,
+            ':status' => $status
+        ]);
+
+        echo "<script>alert('New student added successfully!');</script>";
+    } catch (PDOException $e) {
+        echo "<script>alert('Error adding student: " . $e->getMessage() . "');</script>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -64,6 +91,34 @@ try {
   <!-- Main Content -->
   <main class="content">
     <h1>Current Students</h1>
+
+    <!-- Add New Student Form -->
+    <h2>Add New Student</h2>
+    <form method="POST" action="currentStudents.php">
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name" required />
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" required />
+
+      <label for="fsu_email">FSU Email:</label>
+      <input type="email" id="fsu_email" name="fsu_email" required />
+
+      <label>Status:</label><br />
+      <input type="radio" id="approved" name="status" value="Approved" />
+      <label for="approved">Approved</label>
+
+      <input type="radio" id="denied" name="status" value="Denied" />
+      <label for="denied">Denied</label>
+
+      <input type="radio" id="waitlisted" name="status" value="Waitlisted" />
+      <label for="waitlisted">Waitlisted</label>
+
+      <br /><br />
+      <button type="submit">Add Student</button>
+    </form>
+
+    <hr />
 
     <!-- Display Students Here -->
     <div id="studentList">
