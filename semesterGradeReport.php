@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ferris Honors Program - Current Students</title>
+  <title>Semester Grade Report</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
-
 <body>
 <?php
-require 'includes/database-connection.php'; // Make sure this file contains your database connection
+require 'includes/database-connection.php';
 
-// Fetch students from the database, including their status
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$query = "
+    SELECT s.student_id, s.last_name, s.first_name, s.middle_name, s.preferred_name, s.fsu_email, a.major
+    FROM student s
+    LEFT JOIN academic_records a ON s.student_id = a.student_id
+";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
 ?>
@@ -23,125 +25,137 @@ $students = $stmt->fetchAll();
     <div class="logo">
       <img src="images/ferris-logo.png" alt="Ferris State University Logo" />
     </div>
-    <ul class="nav-links" id="sidebarLinks">
+    <ul class="nav-links">
       <li><a href="index.php">Dashboard</a></li>
-      <li><a href="applications.php" class="active">Applications</a></li>
+      <li><a href="applications.php">Applications</a></li>
       <li><a href="currentStudents.php">Current Students</a></li>
-      <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
+      <li><a href="semesterGradeReport.php" class="active">Semester Grade Report</a></li>
       <li><a href="studentEvents.php">Student Events</a></li>
       <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
   </nav>
 
-  <!-- Top Search Bar -->
-  <div class="search-container">
-    <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program..." />
-    <button class="search-button" onclick="performSearch()">Search</button>
-    <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
-    <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
-  </div>
-
-  <!-- Main Content -->
   <main class="content">
-    <h1>Current Students</h1>
+    <h1>Semester Grade Report</h1>
 
-    <!-- Application Form  -->
-    <form id="applicationForm" class="application-form" method="POST" action="#">
-      <h2>New Application</h2>
-      <label for="name">Applicant Name:</label>
-      <input type="text" id="name" name="name" required />
-
-      <label for="studentId">Student ID</label>
-      <input type="text" id="studentId" name="studentId" required />
-
-      <label for="program">Program Applied For:</label>
-      <input type="text" id="program" name="program" required />
-
-      <label for="date">Application Date:</label>
-      <input type="date" id="date" name="date" required />
-
-      <label>Status:</label><br />
-      <input type="radio" id="approve" name="status" value="Approved" />
-      <label for="approve">Approve</label>
-
-      <input type="radio" id="deny" name="status" value="Denied" />
-      <label for="deny">Deny</label>
-
-      <input type="radio" id="wait" name="status" value="Waitlisted" />
-      <label for="wait">Waitlist</label>
-
-      <br /><br />
-      <button type="submit">Submit</button>
-    </form>
-
-    <hr />
-
-    <!-- Display Students Here -->
-    <div id="studentList">
-      <?php
-      if ($students) {
-          foreach ($students as $student) {
-              echo "
-                <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['status']}</p>
-                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
-                  <hr />
-                </div>
-              ";
-          }
-      } else {
-          echo "<p>No students found in the database.</p>";
-      }
-      ?>
+    <!-- Add Entry Form -->
+    <div class="form-container">
+      <form id="gradeForm">
+        <input type="text" id="lastName" placeholder="Last Name" required />
+        <input type="text" id="firstName" placeholder="First Name" required />
+        <input type="text" id="studentId" placeholder="Student ID" required />
+        <input type="text" id="course" placeholder="Course" required />
+        <input type="text" id="crn" placeholder="CRN" required />
+        <input type="text" id="midTerm" placeholder="Mid-Term Grade" required />
+        <input type="text" id="finalGrade" placeholder="Final Grade" required />
+        <button type="submit">Save Entry</button>
+      </form>
     </div>
 
+    <!-- Grade Table -->
+    <table>
+      <caption>Semester Grade Report</caption>
+      <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Student ID</th>
+          <th>Course</th>
+          <th>CRN</th>
+          <th>Mid-Term Grade</th>
+          <th>Final Grade</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="gradeTableBody">
+        <!-- Dynamic rows go here -->
+      </tbody>
+    </table>
   </main>
 
   <script>
-    // Function to perform search
-    function performSearch() {
-      const query = document.getElementById("searchInput").value;
-      alert(query ? "Searching for: " + query : "Please enter a search query.");
-    }
+    const form = document.getElementById('gradeForm');
+    const tableBody = document.getElementById('gradeTableBody');
+    let editIndex = null; // Track if editing
 
-    // Function to handle sign-out
-    function signOut() {
-      alert("You have signed out.");
-    }
+    // Load existing grades on page load
+    window.addEventListener('DOMContentLoaded', loadGrades);
 
-    // Handle student entry actions (delete)
-    document.addEventListener("DOMContentLoaded", function () {
+    // Handle form submission
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-      // Delete button
-      document.querySelectorAll(".delete-btn").forEach(button => {
-        button.addEventListener("click", function () {
-          const studentId = this.getAttribute("data-student-id");
-          if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
-            // Send a request to the backend to delete the student from the database
-            fetch(`deleteStudent.php?student_id=${studentId}`, {
-              method: 'GET',
-            })
-            .then(response => response.json())
-            .then(data => {
-              if(data.success) {
-                alert("Student deleted successfully.");
-                location.reload(); // Refresh the page after deletion
-              } else {
-                alert("Error deleting student.");
-              }
-            })
-            .catch(error => {
-              console.error("Error deleting student:", error);
-              alert("Error deleting student.");
-            });
-          }
-        });
-      });
+      const entry = {
+        lastName: document.getElementById('lastName').value,
+        firstName: document.getElementById('firstName').value,
+        studentId: document.getElementById('studentId').value,
+        course: document.getElementById('course').value,
+        crn: document.getElementById('crn').value,
+        midTerm: document.getElementById('midTerm').value,
+        finalGrade: document.getElementById('finalGrade').value
+      };
+
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+
+      if (editIndex === null) {
+        grades.push(entry);
+      } else {
+        grades[editIndex] = entry;
+        editIndex = null;
+      }
+
+      localStorage.setItem('grades', JSON.stringify(grades));
+      form.reset();
+      loadGrades();
     });
-  </script>
 
+    // Load and render grades from localStorage
+    function loadGrades() {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      tableBody.innerHTML = '';
+
+      grades.forEach((grade, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${grade.lastName}</td>
+          <td>${grade.firstName}</td>
+          <td>${grade.studentId}</td>
+          <td>${grade.course}</td>
+          <td>${grade.crn}</td>
+          <td>${grade.midTerm}</td>
+          <td>${grade.finalGrade}</td>
+          <td>
+            <button onclick="editGrade(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteGrade(${index})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Edit grade
+    function editGrade(index) {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      const grade = grades[index];
+
+      document.getElementById('lastName').value = grade.lastName;
+      document.getElementById('firstName').value = grade.firstName;
+      document.getElementById('studentId').value = grade.studentId;
+      document.getElementById('course').value = grade.course;
+      document.getElementById('crn').value = grade.crn;
+      document.getElementById('midTerm').value = grade.midTerm;
+      document.getElementById('finalGrade').value = grade.finalGrade;
+
+      editIndex = index;
+    }
+
+    // Delete grade by index
+    function deleteGrade(index) {
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      grades.splice(index, 1);
+      localStorage.setItem('grades', JSON.stringify(grades));
+      loadGrades();
+    }
+  </script>
 </body>
 </html>
