@@ -192,21 +192,6 @@ $students = $stmt->fetchAll();
     window.addEventListener("DOMContentLoaded", () => {
       displayApplications();
     });
-
-    fetch("sidebarNavigationHandler.json")
-      .then((response) => response.json())
-      .then((data) => {
-        const sidebar = document.getElementById("sidebarLinks");
-        let currentPage = window.location.pathname.split("/").pop() || "index.php";
-
-        data.forEach((item) => {
-          const li = document.createElement("li");
-          const isActive = item.url.includes(currentPage) ? "active" : "";
-          li.innerHTML = `<a href="${item.url}" class="${isActive}">${item.name}</a>`;
-          sidebar.appendChild(li);
-        });
-      })
-      .catch((error) => console.error("Error loading navigation:", error));
   </script>
 
 </body>
