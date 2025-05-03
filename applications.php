@@ -3,12 +3,25 @@
 require 'includes/database-connection.php';
 
 // Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, FROM student";
-$query = "SELECT app_decision FROM Status";
+$query_students = "SELECT student_id, first_name, last_name, fsu_email FROM student";
+$query_status = "SELECT student_id, app_decision FROM Status"; // Assuming you want the status for each student
 
+// Try to fetch student data
 try {
-    $stmt = $pdo->query($query);
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Execute the first query to get student details
+    $stmt_students = $pdo->query($query_students);
+    $students = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
+
+    // Execute the second query to get application decision for each student
+    $stmt_status = $pdo->query($query_status);
+    $statuses = $stmt_status->fetchAll(PDO::FETCH_ASSOC);
+
+    // Create a lookup array to map student_id to app_decision
+    $status_lookup = [];
+    foreach ($statuses as $status) {
+        $status_lookup[$status['student_id']] = $status['app_decision'];
+    }
+
 } catch (PDOException $e) {
     die("Error executing query: " . $e->getMessage());
 }
@@ -57,12 +70,14 @@ try {
       <?php
       if ($students) {
           foreach ($students as $student) {
+              // Get status for each student using the lookup table
+              $status = isset($status_lookup[$student['student_id']]) ? $status_lookup[$student['student_id']] : 'Not Available';
               echo "
                 <div class='student-entry'>
                   <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['app_decision']}</p>
+                  <p><strong>Status:</strong> {$status}</p>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
