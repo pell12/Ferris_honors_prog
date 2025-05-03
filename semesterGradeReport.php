@@ -1,21 +1,63 @@
 <?php
 require 'includes/database-connection.php';
 
-// Insert form data if form was submitted
+// Handle delete
+if (isset($_GET['delete'])) {
+    $stmt = $pdo->prepare("DELETE FROM academic_records WHERE academic_id = :academic_id");
+    $stmt->execute(['academic_id' => $_GET['delete']]);
+    header("Location: semesterGradeReport.php");
+    exit;
+}
+
+// Handle edit form
+$editMode = false;
+$editData = [];
+
+if (isset($_GET['edit'])) {
+    $stmt = $pdo->prepare("SELECT * FROM academic_records WHERE academic_id = :academic_id");
+    $stmt->execute(['academic_id' => $_GET['edit']]);
+    $editData = $stmt->fetch();
+    if ($editData) {
+        $editMode = true;
+    }
+}
+
+// Handle insert/update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $sql = "
-        INSERT INTO academic_records (
-            academic_id, student_id, hs_gpa, act_comp, sat_comp,
-            first_semester_as_honors, last_semester_gpa, total_credits_gpa_hours,
-            total_credits_attempted, last_semester_at_ferris, total_semesters_at_ferris,
-            major, college
-        ) VALUES (
-            :academic_id, :student_id, :hs_gpa, :act_comp, :sat_comp,
-            :first_semester_as_honors, :last_semester_gpa, :total_credits_gpa_hours,
-            :total_credits_attempted, :last_semester_at_ferris, :total_semesters_at_ferris,
-            :major, :college
-        )
-    ";
+    if (isset($_POST['is_edit']) && $_POST['is_edit'] === '1') {
+        // Update
+        $sql = "
+            UPDATE academic_records SET
+                student_id = :student_id,
+                hs_gpa = :hs_gpa,
+                act_comp = :act_comp,
+                sat_comp = :sat_comp,
+                first_semester_as_honors = :first_semester_as_honors,
+                last_semester_gpa = :last_semester_gpa,
+                total_credits_gpa_hours = :total_credits_gpa_hours,
+                total_credits_attempted = :total_credits_attempted,
+                last_semester_at_ferris = :last_semester_at_ferris,
+                total_semesters_at_ferris = :total_semesters_at_ferris,
+                major = :major,
+                college = :college
+            WHERE academic_id = :academic_id
+        ";
+    } else {
+        // Insert
+        $sql = "
+            INSERT INTO academic_records (
+                academic_id, student_id, hs_gpa, act_comp, sat_comp,
+                first_semester_as_honors, last_semester_gpa, total_credits_gpa_hours,
+                total_credits_attempted, last_semester_at_ferris, total_semesters_at_ferris,
+                major, college
+            ) VALUES (
+                :academic_id, :student_id, :hs_gpa, :act_comp, :sat_comp,
+                :first_semester_as_honors, :last_semester_gpa, :total_credits_gpa_hours,
+                :total_credits_attempted, :last_semester_at_ferris, :total_semesters_at_ferris,
+                :major, :college
+            )
+        ";
+    }
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
@@ -29,18 +71,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':total_credits_gpa_hours' => $_POST['total_credits_gpa_hours'],
         ':total_credits_attempted' => $_POST['total_credits_attempted'],
         ':last_semester_at_ferris' => $_POST['last_semester_at_ferris'],
-        ':total_semester_at_ferris' => $_POST['total_semesters_at_ferris'],
+        ':total_semesters_at_ferris' => $_POST['total_semesters_at_ferris'],
         ':major' => $_POST['major'],
         ':college' => $_POST['college'],
     ]);
 
-    header("Location: semesterGradeReport.php"); // Redirect to avoid form resubmission
+    header("Location: semesterGradeReport.php");
     exit;
 }
 
-// Fetch existing records
-$query = "SELECT * FROM academic_records";
-$records = $pdo->query($query)->fetchAll();
+// Fetch all records
+$records = $pdo->query("SELECT * FROM academic_records")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -61,8 +102,8 @@ $records = $pdo->query($query)->fetchAll();
     <ul class="nav-links">
       <li><a href="index.php">Dashboard</a></li>
       <li><a href="applications.php">Applications</a></li>
-      <li><a href="currentStudents.php">Current Students</a></li>
-      <li><a href="semesterGradeReport.php" class="active">Semester Grade Report</a></li>
+      <li><a href="currentStudents.php" class="active">Current Students</a></li>
+      <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
       <li><a href="studentEvents.php">Student Events</a></li>
       <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
@@ -72,23 +113,24 @@ $records = $pdo->query($query)->fetchAll();
 <main class="content">
   <h1>Semester Grade Report</h1>
 
-  <!-- Add Entry Form -->
+  <!-- Entry Form -->
   <div class="form-container">
     <form method="POST" action="semesterGradeReport.php">
-      <input type="text" name="academic_id" placeholder="Academic ID" required />
-      <input type="text" name="student_id" placeholder="Student ID" required />
-      <input type="text" name="hs_gpa" placeholder="HS GPA" required />
-      <input type="text" name="act_comp" placeholder="ACT Comp" required />
-      <input type="text" name="sat_comp" placeholder="SAT Comp" required />
-      <input type="text" name="first_semester_as_honors" placeholder="First Semester as Honors" required />
-      <input type="text" name="last_semester_gpa" placeholder="Last Semester GPA" required />
-      <input type="text" name="total_credits_gpa_hours" placeholder="Total Credits GPA Hours" required />
-      <input type="text" name="total_credits_attempted" placeholder="Total Credits Attempted"/>
-      <input type="text" name="last_semester_at_ferris" placeholder="Last Semester at Ferris"/>
-      <input type="text" name="total_semesters_at_ferris" placeholder="Total Semester at Ferris"/>
-      <input type="text" name="major" placeholder="Major"/>
-      <input type="text" name="college" placeholder="College"/>
-      <button type="submit">Save Entry</button>
+      <input type="hidden" name="is_edit" value="<?= $editMode ? '1' : '0' ?>">
+      <input type="text" name="academic_id" placeholder="Academic ID" required value="<?= htmlspecialchars($editData['academic_id'] ?? '') ?>" <?= $editMode ? 'readonly' : '' ?> />
+      <input type="text" name="student_id" placeholder="Student ID" required value="<?= htmlspecialchars($editData['student_id'] ?? '') ?>" />
+      <input type="text" name="hs_gpa" placeholder="HS GPA" value="<?= htmlspecialchars($editData['hs_gpa'] ?? '') ?>" />
+      <input type="text" name="act_comp" placeholder="ACT Comp" value="<?= htmlspecialchars($editData['act_comp'] ?? '') ?>" />
+      <input type="text" name="sat_comp" placeholder="SAT Comp" value="<?= htmlspecialchars($editData['sat_comp'] ?? '') ?>" />
+      <input type="text" name="first_semester_as_honors" placeholder="First Semester as Honors" value="<?= htmlspecialchars($editData['first_semester_as_honors'] ?? '') ?>" />
+      <input type="text" name="last_semester_gpa" placeholder="Last Semester GPA" value="<?= htmlspecialchars($editData['last_semester_gpa'] ?? '') ?>" />
+      <input type="text" name="total_credits_gpa_hours" placeholder="Total Credits GPA Hours" value="<?= htmlspecialchars($editData['total_credits_gpa_hours'] ?? '') ?>" />
+      <input type="text" name="total_credits_attempted" placeholder="Total Credits Attempted" value="<?= htmlspecialchars($editData['total_credits_attempted'] ?? '') ?>" />
+      <input type="text" name="last_semester_at_ferris" placeholder="Last Semester at Ferris" value="<?= htmlspecialchars($editData['last_semester_at_ferris'] ?? '') ?>" />
+      <input type="text" name="total_semesters_at_ferris" placeholder="Total Semester at Ferris" value="<?= htmlspecialchars($editData['total_semesters_at_ferris'] ?? '') ?>" />
+      <input type="text" name="major" placeholder="Major" value="<?= htmlspecialchars($editData['major'] ?? '') ?>" />
+      <input type="text" name="college" placeholder="College" value="<?= htmlspecialchars($editData['college'] ?? '') ?>" />
+      <button type="submit"><?= $editMode ? 'Update Entry' : 'Save Entry' ?></button>
     </form>
   </div>
 
@@ -110,6 +152,7 @@ $records = $pdo->query($query)->fetchAll();
         <th>Total Semesters at Ferris</th>
         <th>Major</th>
         <th>College</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -128,6 +171,10 @@ $records = $pdo->query($query)->fetchAll();
           <td><?= htmlspecialchars($record['total_semesters_at_ferris']) ?></td>
           <td><?= htmlspecialchars($record['major']) ?></td>
           <td><?= htmlspecialchars($record['college']) ?></td>
+          <td class="action-btns">
+            <a href="?edit=<?= urlencode($record['academic_id']) ?>">Edit</a>
+            <a href="?delete=<?= urlencode($record['academic_id']) ?>" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</a>
+          </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
