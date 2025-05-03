@@ -3,7 +3,8 @@
 require 'includes/database-connection.php';
 
 // Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$query = "SELECT student_id, first_name, last_name, fsu_email, FROM student";
+$query = "SELECT app_decision FROM Status";
 
 try {
     $stmt = $pdo->query($query);
@@ -61,7 +62,7 @@ try {
                   <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['status']}</p>
+                  <p><strong>Status:</strong> {$student['app_decision']}</p>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
