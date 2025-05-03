@@ -1,29 +1,3 @@
-<?php
-// Handle Delete
-if (isset($_GET['delete_id'])) {
-    $deleteId = $_GET['delete_id'];
-    
-    try {
-        // Prepare and execute the delete query
-        $stmt = $pdo->prepare("DELETE FROM student WHERE student_id = ?");
-        $stmt->execute([$deleteId]);
-        
-        // Redirect back to the current students page after deletion
-        header("Location: currentStudents.php");
-        exit;
-    } catch (PDOException $e) {
-        die("Database query failed: " . $e->getMessage());
-    }
-}
-
-require 'includes/database-connection.php'; // Make sure this file contains your database connection
-
-// Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,6 +9,15 @@ $students = $stmt->fetchAll();
 </head>
 
 <body>
+<?php
+require 'includes/database-connection.php'; // Make sure this file contains your database connection
+
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
+
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -62,7 +45,7 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form -->
+    <!-- Application Form  -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
       <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
@@ -114,6 +97,7 @@ $students = $stmt->fetchAll();
       }
       ?>
     </div>
+
   </main>
 
   <script>
@@ -137,7 +121,22 @@ $students = $stmt->fetchAll();
           const studentId = this.getAttribute("data-student-id");
           if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
             // Send a request to the backend to delete the student from the database
-            window.location.href = `currentStudents.php?delete_id=${studentId}`;
+            fetch(`deleteStudent.php?student_id=${studentId}`, {
+              method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(data.success) {
+                alert("Student deleted successfully.");
+                location.reload(); // Refresh the page after deletion
+              } else {
+                alert("Error deleting student.");
+              }
+            })
+            .catch(error => {
+              console.error("Error deleting student:", error);
+              alert("Error deleting student.");
+            });
           }
         });
       });
