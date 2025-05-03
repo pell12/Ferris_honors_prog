@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ferris Honors Program - Current Students</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 
 <body>
-  <?php
-    require 'includes/database-connection.php'; // Include the database connection
+<?php
+require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
-    // Fetch students from the database
-    $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-    $stmt = $pdo->query($query);
-    $students = $stmt->fetchAll();
-  ?>
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+?>
 
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
@@ -45,7 +45,7 @@
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form -->
+    <!-- Application Form  -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
       <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
@@ -79,24 +79,25 @@
     <!-- Display Students Here -->
     <div id="studentList">
       <?php
-        if ($students) {
+      if ($students) {
           foreach ($students as $student) {
-            echo "
-              <div class='student-entry'>
-                <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                <p><strong>Status:</strong> {$student['status']}</p>
-                <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
-                <hr />
-              </div>
-            ";
+              echo "
+                <div class='student-entry'>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  <p><strong>Status:</strong> {$student['status']}</p>
+                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
+                  <hr />
+                </div>
+              ";
           }
-        } else {
+      } else {
           echo "<p>No students found in the database.</p>";
-        }
+      }
       ?>
     </div>
+
   </main>
 
   <script>
@@ -113,11 +114,13 @@
 
     // Handle student entry actions (edit, waitlist, delete)
     document.addEventListener("DOMContentLoaded", function () {
-      // Delete button event
+
+      // Delete button
       document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function () {
           const studentId = this.getAttribute("data-student-id");
           if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
+            // Send a request to the backend to delete the student from the database
             fetch(`deleteStudent.php?student_id=${studentId}`, {
               method: 'GET',
             })
