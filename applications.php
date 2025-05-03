@@ -1,3 +1,40 @@
+<?php
+require 'includes/database-connection.php';
+
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+$stmt = $pdo->query($query);
+$students = $stmt->fetchAll();
+
+// Handle updating status
+if (isset($_POST['update_status'])) {
+    $student_id = $_POST['student_id'];
+    $new_status = $_POST['status'];
+
+    // Update the status in the database
+    $updateQuery = "UPDATE student SET status = :status WHERE student_id = :student_id";
+    $stmt = $pdo->prepare($updateQuery);
+    $stmt->bindParam(':status', $new_status);
+    $stmt->bindParam(':student_id', $student_id);
+    $stmt->execute();
+
+    echo "Student status updated successfully!";
+}
+
+// Handle deleting a student
+if (isset($_GET['student_id'])) {
+    $student_id = $_GET['student_id'];
+
+    // Delete the student from the database
+    $deleteQuery = "DELETE FROM student WHERE student_id = :student_id";
+    $stmt = $pdo->prepare($deleteQuery);
+    $stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    echo "Student deleted successfully!";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,14 +46,6 @@
 </head>
 
 <body>
-<?php
-require 'includes/database-connection.php'; // Make sure this file contains your database connection
-
-// Fetch students from the database, including the status
-$query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
 
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
@@ -45,7 +74,7 @@ $students = $stmt->fetchAll();
   <main class="content">
     <h1>Current Students</h1>
 
-    <!-- Application Form  -->
+    <!-- Application Form -->
     <form id="applicationForm" class="application-form" method="POST" action="#">
       <h2>New Application</h2>
       <label for="name">Applicant Name:</label>
@@ -81,17 +110,42 @@ $students = $stmt->fetchAll();
       <?php
       if ($students) {
           foreach ($students as $student) {
+              // Display the status of each student
+              $statusLabel = "";
+              switch ($student['status']) {
+                  case 'Approved':
+                      $statusLabel = "<span style='color: green;'>Accepted</span>";
+                      break;
+                  case 'Denied':
+                      $statusLabel = "<span style='color: red;'>Denied</span>";
+                      break;
+                  case 'Waitlisted':
+                      $statusLabel = "<span style='color: orange;'>Waitlisted</span>";
+                      break;
+                  default:
+                      $statusLabel = "<span>Unknown Status</span>";
+                      break;
+              }
+
               echo "
-                <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['status']}</p>
-                  <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
-                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
-                  <hr />
-                </div>
-              ";
+                  <div class='student-entry'>
+                    <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                    <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                    <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                    <p><strong>Status:</strong> {$statusLabel}</p>
+                    <form action='' method='POST'>
+                        <input type='hidden' name='student_id' value='{$student['student_id']}' />
+                        <select name='status'>
+                            <option value='Approved' ".($student['status'] == 'Approved' ? 'selected' : '').">Approved</option>
+                            <option value='Denied' ".($student['status'] == 'Denied' ? 'selected' : '').">Denied</option>
+                            <option value='Waitlisted' ".($student['status'] == 'Waitlisted' ? 'selected' : '').">Waitlisted</option>
+                        </select>
+                        <button type='submit' name='update_status'>Update Status</button>
+                    </form>
+                    <a href='?student_id={$student['student_id']}' class='delete-btn'>Delete</a>
+                    <hr />
+                  </div>
+                ";
           }
       } else {
           echo "<p>No students found in the database.</p>";
@@ -112,40 +166,6 @@ $students = $stmt->fetchAll();
     function signOut() {
       alert("You have signed out.");
     }
-
-    // Handle student entry actions (edit, delete)
-    document.addEventListener("DOMContentLoaded", function () {
-      // Edit button
-      document.querySelectorAll(".edit-btn").forEach(button => {
-        button.addEventListener("click", function () {
-          const studentId = this.getAttribute("data-student-id");
-          alert("Editing student with ID: " + studentId);
-          // Implement edit functionality here (e.g., populate form fields with student data)
-        });
-      });
-
-      // Delete button
-      document.querySelectorAll(".delete-btn").forEach(button => {
-        button.addEventListener("click", function () {
-          const studentId = this.getAttribute("data-student-id");
-          if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
-            // Send a request to the backend to delete the student from the database
-            fetch(`deleteStudent.php?student_id=${studentId}`, {
-              method: 'GET',
-            })
-            .then(response => response.json())
-            .then(data => {
-              alert("Student deleted successfully.");
-              location.reload(); // Refresh the page after deletion
-            })
-            .catch(error => {
-              console.error("Error deleting student:", error);
-              alert("Error deleting student.");
-            });
-          }
-        });
-      });
-    });
   </script>
 
 </body>
