@@ -12,7 +12,7 @@
 <?php
 require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
-// Fetch students from the database, including the 'status' column
+// Fetch students from the database
 $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
@@ -87,7 +87,6 @@ $students = $stmt->fetchAll();
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
                   <p><strong>Status:</strong> {$student['status']}</p>
-                  
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
                 </div>
@@ -113,8 +112,9 @@ $students = $stmt->fetchAll();
       alert("You have signed out.");
     }
 
-    // Handle student entry actions (delete)
+    // Handle student entry actions (edit, waitlist, delete)
     document.addEventListener("DOMContentLoaded", function () {
+
       // Delete button
       document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function () {
@@ -126,8 +126,12 @@ $students = $stmt->fetchAll();
             })
             .then(response => response.json())
             .then(data => {
-              alert("Student deleted successfully.");
-              location.reload(); // Refresh the page after deletion
+              if(data.success) {
+                alert("Student deleted successfully.");
+                location.reload(); // Refresh the page after deletion
+              } else {
+                alert("Error deleting student.");
+              }
             })
             .catch(error => {
               console.error("Error deleting student:", error);
