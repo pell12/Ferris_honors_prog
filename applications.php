@@ -1,38 +1,18 @@
 <?php
+// Include the database connection
 require 'includes/database-connection.php';
+
+// Debugging: Check if the connection is successful
+if ($pdo) {
+    echo "Database connected successfully.";
+} else {
+    echo "Failed to connect to the database.";
+}
 
 // Fetch students from the database
 $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
-
-// Handle updating status
-if (isset($_POST['update_status'])) {
-    $student_id = $_POST['student_id'];
-    $new_status = $_POST['status'];
-
-    // Update the status in the database
-    $updateQuery = "UPDATE student SET status = :status WHERE student_id = :student_id";
-    $stmt = $pdo->prepare($updateQuery);
-    $stmt->bindParam(':status', $new_status);
-    $stmt->bindParam(':student_id', $student_id);
-    $stmt->execute();
-
-    echo "Student status updated successfully!";
-}
-
-// Handle deleting a student
-if (isset($_GET['student_id'])) {
-    $student_id = $_GET['student_id'];
-
-    // Delete the student from the database
-    $deleteQuery = "DELETE FROM student WHERE student_id = :student_id";
-    $stmt = $pdo->prepare($deleteQuery);
-    $stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    echo "Student deleted successfully!";
-}
 ?>
 
 <!DOCTYPE html>
