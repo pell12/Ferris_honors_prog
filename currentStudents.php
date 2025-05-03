@@ -12,28 +12,27 @@ if (isset($_GET['delete_id'])) {
 
 // Handle Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student_id'])) {
-  $studentId = $_POST['update_student_id'];
-  $firstName = $_POST['first_name'];
-  $lastName = $_POST['last_name'];
-  $preferredName = $_POST['preferred_name'];
-  $major = $_POST['major'];
-  $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $studentId = $_POST['update_student_id'];
+    $firstName = $_POST['first_name'];
+    $lastName = $_POST['last_name'];
+    $preferredName = $_POST['preferred_name'];
+    $major = $_POST['major'];
+    $email = isset($_POST['fsu_email']) ? $_POST['fsu_email'] : '';
 
-  // Update student table (excluding major)
-  $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, fsu_email = ? WHERE student_id = ?");
-  $stmt->execute([$firstName, $lastName, $preferredName, $email, $studentId]);
+    // Update student table
+    $stmt = $pdo->prepare("UPDATE student SET first_name = ?, last_name = ?, preferred_name = ?, fsu_email = ? WHERE student_id = ?");
+    $stmt->execute([$firstName, $lastName, $preferredName, $email, $studentId]);
 
-  // Update academic_records table for major
-  $stmt2 = $pdo->prepare("UPDATE academic_records SET major = ? WHERE student_id = ?");
-  $stmt2->execute([$major, $studentId]);
+    // Update academic_records table
+    $stmt2 = $pdo->prepare("UPDATE academic_records SET major = ? WHERE student_id = ?");
+    $stmt2->execute([$major, $studentId]);
 
-  header("Location: currentStudents.php");
-  exit;
+    header("Location: currentStudents.php");
+    exit;
 }
 
 // Fetch all students
 try {
-    // Ensure `major` is present in the correct table
     $query = "
         SELECT s.student_id, s.first_name, s.middle_name, s.last_name, s.preferred_name, s.fsu_email, a.major
         FROM student s
@@ -44,7 +43,6 @@ try {
 } catch (PDOException $e) {
     echo 'Query failed: ' . $e->getMessage();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -83,7 +81,7 @@ try {
         <input type="text" id="studentId" name="studentId" placeholder="Student ID" required />
         <input type="text" id="preferredName" name="preferredName" placeholder="Preferred Name" />
         <input type="text" id="major" name="major" placeholder="Major" required />
-        <input type="email" id="email" name="email" placeholder="Email" required />
+        <input type="email" id="email" name="fsu_email" placeholder="Email" required />
         <button type="submit">Add Student</button>
       </form>
     </div>
@@ -109,7 +107,14 @@ try {
             <td><?= htmlspecialchars($student['major']) ?></td>
             <td><a href="mailto:<?= htmlspecialchars($student['fsu_email']) ?>"><?= htmlspecialchars($student['fsu_email']) ?></a></td>
             <td>
-              <a href="javascript:void(0)" onclick="editStudent('<?= $student['student_id'] ?>', '<?= addslashes($student['first_name']) ?>', '<?= addslashes($student['last_name']) ?>', '<?= addslashes($student['preferred_name']) ?>', '<?= addslashes($student['major']) ?>', '<?= addslashes($student['fsu_email']) ?>')">✏️</a> |
+              <a href="javascript:void(0)" onclick="editStudent(
+                '<?= $student['student_id'] ?>',
+                '<?= addslashes($student['first_name']) ?>',
+                '<?= addslashes($student['last_name']) ?>',
+                '<?= addslashes($student['preferred_name']) ?>',
+                '<?= addslashes($student['major']) ?>',
+                '<?= addslashes($student['fsu_email']) ?>'
+              )">✏️</a> |
               <a href="currentStudents.php?delete_id=<?= $student['student_id'] ?>" onclick="return confirm('Are you sure you want to delete this student?');">❌</a>
             </td>
           </tr>
@@ -126,7 +131,7 @@ try {
         <input type="text" name="last_name" id="edit_last_name" placeholder="Last Name" required />
         <input type="text" name="preferred_name" id="edit_preferred_name" placeholder="Preferred Name" />
         <input type="text" name="major" id="edit_major" placeholder="Major" required />
-        <input type="email" name="fsu_email" id="edit_fsu_email" placeholder="Email" />
+        <input type="email" name="fsu_email" id="edit_fsu_email" placeholder="Email" required />
         <button type="submit">Update Student</button>
         <button type="button" onclick="cancelEdit()">Cancel</button>
       </form>
