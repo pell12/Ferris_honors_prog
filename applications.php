@@ -1,40 +1,23 @@
-<?php
-// Handle Delete
-if (isset($_GET['delete_id'])) {
-    $deleteId = $_GET['delete_id'];
-
-    try {
-        // Prepare and execute the delete query
-        $stmt = $pdo->prepare("DELETE FROM student WHERE student_id = ?");
-        $stmt->execute([$deleteId]);
-
-        // Redirect back to the current students page after deletion
-        header("Location: currentStudents.php");
-        exit;
-    } catch (PDOException $e) {
-        die("Database query failed: " . $e->getMessage());
-    }
-}
-
-require 'includes/database-connection.php'; // Make sure this file contains your database connection
-
-// Fetch students from the database
-$query = "SELECT student_id, first_name, last_name, fsu_email, status, app_decision FROM student";
-$stmt = $pdo->query($query);
-$students = $stmt->fetchAll();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ferris Honors Program - Current Students</title>
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 
 <body>
+  <?php
+    require 'includes/database-connection.php'; // Include the database connection
+
+    // Fetch students from the database
+    $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
+    $stmt = $pdo->query($query);
+    $students = $stmt->fetchAll();
+  ?>
+
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -88,18 +71,6 @@ $students = $stmt->fetchAll();
       <label for="wait">Waitlist</label>
 
       <br /><br />
-      
-      <label for="app_decision">Application Decision:</label><br />
-      <input type="radio" id="approve" name="app_decision" value="Approved" />
-      <label for="approve">Approve</label>
-
-      <input type="radio" id="deny" name="app_decision" value="Denied" />
-      <label for="deny">Deny</label>
-
-      <input type="radio" id="wait" name="app_decision" value="Waitlisted" />
-      <label for="wait">Waitlist</label>
-
-      <br /><br />
       <button type="submit">Submit</button>
     </form>
 
@@ -108,23 +79,22 @@ $students = $stmt->fetchAll();
     <!-- Display Students Here -->
     <div id="studentList">
       <?php
-      if ($students) {
+        if ($students) {
           foreach ($students as $student) {
-              echo "
-                <div class='student-entry'>
-                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
-                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
-                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
-                  <p><strong>Status:</strong> {$student['status']}</p>
-                  <p><strong>Application Decision:</strong> {$student['app_decision']}</p>
-                  <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
-                  <hr />
-                </div>
-              ";
+            echo "
+              <div class='student-entry'>
+                <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                <p><strong>Status:</strong> {$student['status']}</p>
+                <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
+                <hr />
+              </div>
+            ";
           }
-      } else {
+        } else {
           echo "<p>No students found in the database.</p>";
-      }
+        }
       ?>
     </div>
   </main>
@@ -143,14 +113,27 @@ $students = $stmt->fetchAll();
 
     // Handle student entry actions (edit, waitlist, delete)
     document.addEventListener("DOMContentLoaded", function () {
-
-      // Delete button
+      // Delete button event
       document.querySelectorAll(".delete-btn").forEach(button => {
         button.addEventListener("click", function () {
           const studentId = this.getAttribute("data-student-id");
           if (confirm("Are you sure you want to delete student with ID " + studentId + "?")) {
-            // Send a request to the backend to delete the student from the database
-            window.location.href = `currentStudents.php?delete_id=${studentId}`;
+            fetch(`deleteStudent.php?student_id=${studentId}`, {
+              method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+              if(data.success) {
+                alert("Student deleted successfully.");
+                location.reload(); // Refresh the page after deletion
+              } else {
+                alert("Error deleting student.");
+              }
+            })
+            .catch(error => {
+              console.error("Error deleting student:", error);
+              alert("Error deleting student.");
+            });
           }
         });
       });
