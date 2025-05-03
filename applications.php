@@ -10,19 +10,14 @@
 
 <body>
 <?php
-require 'includes/database-connection.php';
+require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
-// This block is unnecessary if you're not using $students anywhere below.
-// Keeping it commented for now in case you want to reuse later.
-/*
-$query = "
-    SELECT student_id, first_name, last_name, fsu_email
-    FROM student
-";
+// Fetch students from the database
+$query = "SELECT student_id, first_name, last_name, fsu_email FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
-*/
 ?>
+
   <!-- Sidebar Navigation -->
   <nav class="sidebar">
     <div class="logo">
@@ -77,6 +72,26 @@ $students = $stmt->fetchAll();
       <br /><br />
       <button type="submit">Submit</button>
     </form>
+
+    <!-- Display Students Here -->
+    <div id="studentList">
+      <?php
+      if ($students) {
+          foreach ($students as $student) {
+              echo "
+                <div class='student-entry'>
+                  <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
+                  <p><strong>Student ID:</strong> {$student['student_id']}</p>
+                  <p><strong>Email:</strong> {$student['fsu_email']}</p>
+                  <hr />
+                </div>
+              ";
+          }
+      } else {
+          echo "<p>No students found in the database.</p>";
+      }
+      ?>
+    </div>
 
     <!-- Display Applications Here -->
     <div id="applicationList"></div>
