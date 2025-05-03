@@ -102,8 +102,8 @@ $records = $pdo->query("SELECT * FROM academic_records")->fetchAll();
     <ul class="nav-links">
       <li><a href="index.php">Dashboard</a></li>
       <li><a href="applications.php">Applications</a></li>
-      <li><a href="currentStudents.php" class="active">Current Students</a></li>
-      <li><a href="semesterGradeReport.php">Semester Grade Report</a></li>
+      <li><a href="currentStudents.php">Current Students</a></li>
+      <li><a href="semesterGradeReport.php" class="active">Semester Grade Report</a></li>
       <li><a href="studentEvents.php">Student Events</a></li>
       <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
