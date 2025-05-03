@@ -252,7 +252,7 @@ body {
 /*Table*/
 table {
     border-collapse: collapse;
-    border: 10px solid black;
+    border: 5px solid black;
 }
 
 table td {
