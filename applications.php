@@ -10,9 +10,9 @@
 
 <body>
 <?php
-require 'includes/database-connection.php'; // Ensure this file contains your database connection
+require 'includes/database-connection.php'; // Make sure this file contains your database connection
 
-// Fetch students from the database
+// Fetch students from the database, including the status
 $query = "SELECT student_id, first_name, last_name, fsu_email, status FROM student";
 $stmt = $pdo->query($query);
 $students = $stmt->fetchAll();
@@ -81,14 +81,12 @@ $students = $stmt->fetchAll();
       <?php
       if ($students) {
           foreach ($students as $student) {
-              // Display the student details and their status
               echo "
                 <div class='student-entry'>
                   <p><strong>Name:</strong> {$student['first_name']} {$student['last_name']}</p>
                   <p><strong>Student ID:</strong> {$student['student_id']}</p>
                   <p><strong>Email:</strong> {$student['fsu_email']}</p>
                   <p><strong>Status:</strong> {$student['status']}</p>
-                  
                   <button class='edit-btn' data-student-id='{$student['student_id']}'>Edit</button>
                   <button class='delete-btn' data-student-id='{$student['student_id']}'>Delete</button>
                   <hr />
@@ -123,7 +121,6 @@ $students = $stmt->fetchAll();
           const studentId = this.getAttribute("data-student-id");
           alert("Editing student with ID: " + studentId);
           // Implement edit functionality here (e.g., populate form fields with student data)
-          // You can create a modal or open another page for editing.
         });
       });
 
