@@ -29,6 +29,14 @@
             </ul>
     </nav>
 
+    <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <!-- Sign-out Icon (Font Awesome) -->
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+        </div>
+
     <main class="content">
       <h1>Upload / Data Sync</h1>
       <p>Upload Cultural Events or Service Activities from Excel.</p>
@@ -120,6 +128,23 @@
       html += `</tbody></table><p style="color:red;">* Rows highlighted in red have invalid student ID or email</p>`;
       document.getElementById("previewContainer").innerHTML = html;
     }
+
+    // Function to perform search action
+    function performSearch() {
+      var query = document.getElementById("searchInput").value;
+        if (query) {
+          alert("Searching for: " + query);
+          // You can integrate this with a search functionality later
+          } else {
+            alert("Please enter a search query.");
+          }
+        }
+
+        // Function to handle sign out (example action)
+        function signOut() {
+          alert("You have signed out.");
+          // Add actual sign-out logic here (e.g., redirecting to the login page)
+        }
   </script>
 </body>
 </html>

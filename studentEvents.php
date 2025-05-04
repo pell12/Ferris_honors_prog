@@ -33,6 +33,14 @@ $students = $stmt->fetchAll();
             </ul>
         </nav>
 
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <!-- Sign-out Icon (Font Awesome) -->
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+        </div>
+
         <main class="content">
             <h1>Student Events</h1>
             <p>Welcome to the Student Events page. Here you can manage student events.</p>
@@ -52,16 +60,16 @@ $students = $stmt->fetchAll();
                 <div id="studentForm" style="display: none;">
                     <h3>Enter Student Information</h3>
                     <label for="studentId">Student ID:</label>
-                    <input type="text" id="studentId" placeholder="Enter Student ID">
+                    <input type="text" id="studentId" placeholder="Enter Student ID" required>
 
                     <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" placeholder="Enter First Name">
+                    <input type="text" id="firstName" placeholder="Enter First Name" required>
 
                     <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" placeholder="Enter Last Name">
+                    <input type="text" id="lastName" placeholder="Enter Last Name" required>
 
                     <label for="email">Email:</label>
-                    <input type="email" id="email" placeholder="Enter Email">
+                    <input type="email" id="email" placeholder="Enter Email" required>
 
                     <button onclick="saveStudentActivity()">Save Student Activity</button>
                 </div>
@@ -236,6 +244,23 @@ $students = $stmt->fetchAll();
             const symposiumDate = document.getElementById("symposiumDate").value;
 
             alert(`Saved:\nLeadership Role: ${leadershipRole}\nSenior Symposium: ${seniorSymposium}\nSymposium Date: ${symposiumDate || 'N/A'}`);
+        }
+
+        // Function to perform search action
+        function performSearch() {
+            var query = document.getElementById("searchInput").value;
+            if (query) {
+                alert("Searching for: " + query);
+                // You can integrate this with a search functionality later
+            } else {
+                alert("Please enter a search query.");
+            }
+        }
+
+        // Function to handle sign out (example action)
+        function signOut() {
+            alert("You have signed out.");
+            // Add actual sign-out logic here (e.g., redirecting to the login page)
         }
     </script>
 </body>
