@@ -108,7 +108,14 @@ $records = $pdo->query("SELECT * FROM academic_records")->fetchAll();
       <li><a href="uploadDataSync.php">Upload/Data Sync</a></li>
     </ul>
   </nav>
-
+<!-- Fixed Search Bar at the Top -->
+<div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search Ferris Honors Program...">
+            <button class="search-button" onclick="performSearch()">Search</button>
+            <!-- Sign-out Icon (Font Awesome) -->
+            <i class="fa fa-user-circle signout-icon" aria-hidden="true"></i>
+            <i class="fas fa-sign-out-alt signout-icon" onclick="signOut()"></i>
+        </div>
 
 <main class="content">
   <h1>Semester Grade Report</h1>
@@ -179,6 +186,24 @@ $records = $pdo->query("SELECT * FROM academic_records")->fetchAll();
       <?php endforeach; ?>
     </tbody>
   </table>
+  <script>
+        // Function to perform search action
+        function performSearch() {
+            var query = document.getElementById("searchInput").value;
+            if (query) {
+                alert("Searching for: " + query);
+                // You can integrate this with a search functionality later
+            } else {
+                alert("Please enter a search query.");
+            }
+        }
+
+        // Function to handle sign out (example action)
+        function signOut() {
+            alert("You have signed out.");
+            // Add actual sign-out logic here (e.g., redirecting to the login page)
+        }
+    </script>
 </main>
 </body>
 </html>
