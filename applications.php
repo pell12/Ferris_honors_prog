@@ -155,6 +155,10 @@ list($students, $status_lookup) = fetchStudentsAndStatus($pdo);
       <?php
       if (!empty($students)) { // Use !empty() to check if the students array has data
           foreach ($students as $student) {
+            $status = $status_lookup[$student['student_id']] ?? null;
+            if (in_array(strtolower($status), ['accepted', 'denied', 'rejected'])) {
+              continue;
+            }
               $status = $status_lookup[$student['student_id']] ?? 'Not Available';
               echo "
                 <div class='student-entry'>
